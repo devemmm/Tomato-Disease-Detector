@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text,TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text,TouchableOpacity, Alert, Image, StyleSheet } from 'react-native';
 import { APP_GREEN_COLOR, HEIGHT, WIDTH } from '../contansts/constants';
 
 const ResultScreen = ({navigation})=>{
     return(
         <View style={styles.container}>
-            <Text>Identified</Text>
+            <Image source={require('../../assets/search_result.png')} style={styles.icon_result}/>
+            <Text style={{fontSize: 18, fontWeight: 'bold', color: APP_GREEN_COLOR}}>Identified</Text>
             <Text style= {styles.disease_result}>Blister Rust</Text>
             <View style={styles.disease_desciption}>
                 <Text style={styles.disease_desciption_text}>Cronartium ribicola is a species of rust fungus in the family Cronartiaceae that causes the disease white pine blister rust</Text>
@@ -46,6 +47,11 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    icon_result:{
+        height: 100,
+        width: 100,
+        marginBottom: 40
     },
     disease_result:{
         fontSize: 30,

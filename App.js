@@ -8,13 +8,42 @@ import AccountScreen from './src/screens/AccountScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ResultScreen from './src/screens/ResultScreen';
 import { APP_GREEN_COLOR } from './src/contansts/constants';
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
 const stack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
 const mainFlow = ()=>{
   return(
-    <tab.Navigator>
+    <tab.Navigator initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          if (route.name === 'Home') {
+            return (
+              <FontAwesome5
+                name={
+                  focused
+                    ? 'indent'
+                    : 'indent'
+                }
+                size={size}
+                color={color}
+              />
+            );
+          } 
+          else if (route.name === 'Account') {
+            return (
+              <MaterialCommunityIcons 
+                name= {focused ? 'account' : 'account'} 
+                size={size} 
+                color= {color} />
+            );
+          }
+        },
+        tabBarInactiveTintColor: 'grey',
+        tabBarActiveTintColor: APP_GREEN_COLOR,
+      })}
+    >
       <tab.Screen
         name = "Home"
         component = {HomeScreen}
