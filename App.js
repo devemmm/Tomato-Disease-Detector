@@ -7,6 +7,7 @@ import SignupScreen from './src/screens/SignupScreen';
 import AccountScreen from './src/screens/AccountScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ResultScreen from './src/screens/ResultScreen';
+import ImageScreen from './src/components/ImageScreen';
 import { APP_GREEN_COLOR } from './src/contansts/constants';
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
@@ -108,6 +109,14 @@ const App =  ()=>{
         <stack.Screen
           name = "Result"
           component  = {ResultScreen}
+          options = {{
+            headerShown: false
+          }}
+        />
+
+        <stack.Screen
+          name = "Image"
+          component  = {ImageScreen}
           options = {{
             headerShown: false
           }}
