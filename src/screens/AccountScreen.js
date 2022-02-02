@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from 'react'
 import {
   View,
   Text,
@@ -8,41 +8,68 @@ import {
   TextInput,
   StyleSheet,
   Image,
-} from "react-native";
+} from 'react-native'
 import {
   APP_GREEN_COLOR,
   HEIGHT,
   WIDTH,
   about_us,
-} from "../contansts/constants";
-import { BottomSheet } from "react-native-btr";
+  profile_image,
+} from '../contansts/constants'
+import { BottomSheet } from 'react-native-btr'
 import {
   AntDesign,
   Entypo,
   MaterialIcons,
   FontAwesome,
   MaterialCommunityIcons,
-} from "@expo/vector-icons";
+} from '@expo/vector-icons'
+import { Context as DataContext } from '../context/AppContext'
+import AppActivityIndictor from '../components/AppActivityIndicator'
 
 const AccountScreen = ({ navigation }) => {
-  const [profile, setProfile] = useState(false);
-  const [about, setAbout] = useState(false);
-  const [TermPrivacy, setTermPrivacy] = useState(false);
-  const [help, setHelp] = useState(false);
+  const [showActivityIndicator, setshowActivityIndicator] = useState(false)
+  const [profile, setProfile] = useState(false)
+  const [about, setAbout] = useState(false)
+  const [TermPrivacy, setTermPrivacy] = useState(false)
+  const [help, setHelp] = useState(false)
+  const { state, signout } = useContext(DataContext)
+  const { user } = state
 
-  const profile_image =
-    "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-image-icon-default-avatar-profile-icon-social-media-user-vector-image-209162840.jpg";
+  const [newUserData, setNewUserData] = useState({
+    fname: user.fname,
+    lname: user.lname,
+  })
+  // const [newUserLocation, setNewUserLocation] = useState({
+  //   province: user.location.province,
+  //   district: user.location.district,
+  //   sector: user.location.sector,
+  //   village: user.location.village,
+  //   cell: user.location.cell,
+  // })
+
+  const [newUserLocation, setNewUserLocation] = useState({
+    province: '',
+    district: '',
+    sector: '',
+    village: '',
+    cell: '',
+  })
   return (
     <View style={styles.container}>
       <StatusBar animated={true} backgroundColor={APP_GREEN_COLOR} />
       <View style={styles.header}>
         <Image source={{ uri: profile_image }} style={styles.profile_picture} />
         <View>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>CYIZA Joseph</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+            {user.lname} {user.fname}
+          </Text>
           <View
-            style={{ backgroundColor: "grey", width: 60, alignItems: "center" }}
+            style={{ backgroundColor: 'grey', width: 60, alignItems: 'center' }}
           >
-            <Text style={{ fontSize: 16 }}>Famer</Text>
+            <Text style={{ fontSize: 16, textTransform: 'capitalize' }}>
+              {user.userType}
+            </Text>
           </View>
         </View>
       </View>
@@ -52,12 +79,12 @@ const AccountScreen = ({ navigation }) => {
           onPress={() => setProfile(true)}
         >
           <MaterialCommunityIcons
-            name="account-details"
+            name='account-details'
             style={styles.menu_icon}
           />
           <View>
             <Text style={{ fontSize: 16 }}>Profile</Text>
-            <Text style={{ color: "grey" }}>Comprete Profile here</Text>
+            <Text style={{ color: 'grey' }}>Comprete Profile here</Text>
           </View>
         </TouchableOpacity>
 
@@ -65,40 +92,42 @@ const AccountScreen = ({ navigation }) => {
           style={styles.menu_op}
           onPress={() => setTermPrivacy(true)}
         >
-          <MaterialIcons name="privacy-tip" style={styles.menu_icon} />
+          <MaterialIcons name='privacy-tip' style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>Term & Privacy</Text>
-            <Text style={{ color: "grey" }}>ready the term and condition</Text>
+            <Text style={{ color: 'grey' }}>ready the term and condition</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menu_op} onPress={() => setHelp(true)}>
-          <Entypo name="help" style={styles.menu_icon} />
+          <Entypo name='help' style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>Help</Text>
-            <Text style={{ color: "grey" }}>get support here</Text>
+            <Text style={{ color: 'grey' }}>get support here</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menu_op} onPress={() => setAbout(true)}>
-          <AntDesign name="infocirlce" style={styles.menu_icon} />
+          <AntDesign name='infocirlce' style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>About Us</Text>
-            <Text style={{ color: "grey" }}>Comprete Profile here</Text>
+            <Text style={{ color: 'grey' }}>Comprete Profile here</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.logout_card}
-          onPress={() => navigation.navigate("Signin")}
+          onPress={() =>
+            signout({ token: 'usgk', navigation, setshowActivityIndicator })
+          }
         >
           <View style={styles.logout_btn}>
-            <FontAwesome name="sign-out" style={styles.menu_icon} />
+            <FontAwesome name='sign-out' style={styles.menu_icon} />
             <View>
               <Text style={{ fontSize: 18, color: APP_GREEN_COLOR }}>
                 Logout
               </Text>
-              <Text style={{ color: "grey" }}>sign out in application</Text>
+              <Text style={{ color: 'grey' }}>sign out in application</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -109,17 +138,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: "white",
-            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
+            backgroundColor: 'white',
+            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-start",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
                 paddingHorizontal: 15,
               }}
             >
@@ -128,95 +157,103 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require("../../assets/arrow-left.png")}
+                  source={require('../../assets/arrow-left.png')}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                 Update Your Account
               </Text>
             </View>
 
             <View style={{ marginHorizontal: 15 }}>
-              <View>
-                <Text style={styles.label}>Names</Text>
+              <View style={{ marginTop: 20 }}>
+                <Text style={styles.label}>First Name</Text>
                 <TextInput
-                  autoCapitalize="none"
+                  autoCapitalize='none'
                   autoCorrect={false}
                   style={styles.input_field}
+                  value={newUserData.fname}
+                  onChangeText={(data) =>
+                    setNewUserData({ ...newUserData, fname: data })
+                  }
                 />
               </View>
               <View>
-                <Text style={styles.label}>Phone Number</Text>
+                <Text style={styles.label}>Last Name</Text>
                 <TextInput
-                  autoCapitalize="none"
+                  autoCapitalize='none'
                   autoCorrect={false}
-                  keyboardType="decimal-pad"
                   style={styles.input_field}
+                  value={newUserData.lname}
+                  onChangeText={(data) =>
+                    setNewUserData({ ...newUserData, fname: data })
+                  }
                 />
               </View>
               <View>
                 <Text style={styles.label}>Province</Text>
                 <TextInput
-                  autoCapitalize="none"
+                  autoCapitalize='none'
                   autoCorrect={false}
                   style={styles.input_field}
+                  value={newUserLocation.province}
+                  onChangeText={(data) =>
+                    setNewUserLocation({ ...newUserLocation, province: data })
+                  }
                 />
               </View>
               <View>
                 <Text style={styles.label}>District</Text>
                 <TextInput
-                  autoCapitalize="none"
+                  autoCapitalize='none'
                   autoCorrect={false}
                   style={styles.input_field}
+                  value={newUserLocation.district}
+                  onChangeText={(data) =>
+                    setNewUserLocation({ ...newUserLocation, district: data })
+                  }
                 />
               </View>
               <View>
                 <Text style={styles.label}>Sector</Text>
                 <TextInput
-                  autoCapitalize="none"
+                  autoCapitalize='none'
                   autoCorrect={false}
                   style={styles.input_field}
+                  value={newUserLocation.sector}
+                  onChangeText={(data) =>
+                    setNewUserLocation({ ...newUserLocation, sector: data })
+                  }
                 />
               </View>
-              <View>
-                <Text style={styles.label}>Village</Text>
-                <TextInput
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  style={styles.input_field}
-                />
-              </View>
+
               <View>
                 <Text style={styles.label}>Cell</Text>
                 <TextInput
-                  autoCapitalize="none"
+                  autoCapitalize='none'
                   autoCorrect={false}
                   style={styles.input_field}
+                  value={newUserLocation.cell}
+                  onChangeText={(data) =>
+                    setNewUserLocation({ ...newUserLocation, cell: data })
+                  }
                 />
               </View>
-              <View>
-                <Text style={styles.label}>Names</Text>
-                <TextInput
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  style={styles.input_field}
-                />
-              </View>
-              <View style={{ alignItems: "center", marginTop: HEIGHT * 0.05 }}>
+              <View style={{ alignItems: 'center', marginTop: HEIGHT * 0.05 }}>
                 <TouchableOpacity
                   style={{
                     backgroundColor: APP_GREEN_COLOR,
                     width: 80,
                     height: 40,
-                    justifyContent: "center",
-                    alignItems: "center",
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     borderRadius: 10,
                   }}
                   onPress={() => setProfile(false)}
                 >
                   <Text
-                    style={{ fontSize: 20, fontWeight: "bold", color: "#fff" }}
+                    style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}
                   >
                     Save
                   </Text>
@@ -235,17 +272,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: "white",
-            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
+            backgroundColor: 'white',
+            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 paddingHorizontal: 15,
               }}
             >
@@ -254,7 +291,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require("../../assets/arrow-left.png")}
+                  source={require('../../assets/arrow-left.png')}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
@@ -265,10 +302,10 @@ const AccountScreen = ({ navigation }) => {
                 paddingHorizontal: 15,
                 paddingTop: HEIGHT * 0.03,
                 paddingBottom: 20,
-                width: "80%",
+                width: '80%',
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                 Tomato Disease Detector
               </Text>
             </View>
@@ -288,17 +325,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: "white",
-            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
+            backgroundColor: 'white',
+            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 paddingHorizontal: 15,
               }}
             >
@@ -307,7 +344,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require("../../assets/arrow-left.png")}
+                  source={require('../../assets/arrow-left.png')}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
@@ -318,10 +355,10 @@ const AccountScreen = ({ navigation }) => {
                 paddingHorizontal: 15,
                 paddingTop: HEIGHT * 0.03,
                 paddingBottom: 20,
-                width: "80%",
+                width: '80%',
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                 Tomato Disease Detector
               </Text>
             </View>
@@ -341,17 +378,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: "white",
-            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
+            backgroundColor: 'white',
+            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 paddingHorizontal: 15,
               }}
             >
@@ -360,7 +397,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require("../../assets/arrow-left.png")}
+                  source={require('../../assets/arrow-left.png')}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
@@ -371,10 +408,10 @@ const AccountScreen = ({ navigation }) => {
                 paddingHorizontal: 15,
                 paddingTop: HEIGHT * 0.03,
                 paddingBottom: 20,
-                width: "80%",
+                width: '80%',
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                 Tomato Disease Detector
               </Text>
             </View>
@@ -388,18 +425,20 @@ const AccountScreen = ({ navigation }) => {
         </View>
       </BottomSheet>
       {/* End ABOUT US */}
+
+      <AppActivityIndictor showActivityIndicator={showActivityIndicator} />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     width: WIDTH - 40,
     marginTop: HEIGHT * 0.04,
   },
@@ -408,20 +447,20 @@ const styles = StyleSheet.create({
     width: 80,
     borderRadius: 200,
     marginRight: 15,
-    resizeMode: "stretch",
+    resizeMode: 'stretch',
   },
   menu: {
     width: WIDTH - 40,
     marginTop: HEIGHT * 0.03,
-    borderTopColor: "grey",
+    borderTopColor: 'grey',
     borderTopWidth: 0.5,
-    alignItems: "center",
+    alignItems: 'center',
   },
   menu_op: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 20,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 10,
     height: 50,
     width: WIDTH - 20,
@@ -432,28 +471,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   logout_card: {
-    borderTopColor: "grey",
+    borderTopColor: 'grey',
     borderTopWidth: 0.5,
     marginTop: HEIGHT * 0.05,
   },
   logout_btn: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: HEIGHT * 0.03,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     width: WIDTH - 100,
     height: 60,
   },
   label: {
     fontSize: 18,
-    color: "grey",
+    color: 'grey',
   },
   input_field: {
-    borderBottomColor: "grey",
+    borderBottomColor: 'grey',
     borderBottomWidth: 0.5,
     fontSize: 16,
     marginBottom: 20,
   },
-});
+})
 
-export default AccountScreen;
+export default AccountScreen

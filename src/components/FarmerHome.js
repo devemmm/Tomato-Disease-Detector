@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -10,43 +10,43 @@ import {
   StatusBar,
   Platform,
   Alert,
-} from "react-native";
+} from 'react-native'
 import {
   APP_GREEN_COLOR,
   HEIGHT,
   WIDTH,
   normalTomatoes,
   affectedTomatoes,
-} from "../contansts/constants";
-import { AntDesign } from "@expo/vector-icons";
-import { BottomSheet } from "react-native-btr";
-import * as ImagePicker from "expo-image-picker";
+} from '../contansts/constants'
+import { AntDesign } from '@expo/vector-icons'
+import { BottomSheet } from 'react-native-btr'
+import * as ImagePicker from 'expo-image-picker'
 
 const perm = async () => {
-  if (Platform.OS !== "web") {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (Platform.OS !== 'web') {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
 
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!')
     }
   }
-};
+}
 
 const FarmerHome = ({ navigation }) => {
-  const [image, setImage] = useState(null);
-  const [uploadModel, setUploadModel] = useState(false);
+  const [image, setImage] = useState(null)
+  const [uploadModel, setUploadModel] = useState(false)
 
   useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
+    ;(async () => {
+      if (Platform.OS !== 'web') {
         const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
+          await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!')
         }
       }
-    })();
-  }, []);
+    })()
+  }, [image])
 
   const PickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,28 +54,29 @@ const FarmerHome = ({ navigation }) => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-    });
+    })
 
-    console.log(result);
+    console.log(result)
 
+    console.log('let me call my api here')
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result.uri)
     }
-  };
+  }
 
   const captchImage = async () => {
-    setImage(null);
+    setImage(null)
     let result = await ImagePicker.launchCameraAsync({
       // mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       // aspect: [4, 3],
       // quality: 1
-    });
+    })
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result.uri)
     }
-  };
+  }
   return (
     <View>
       <View style={styles.main_container}>
@@ -94,7 +95,7 @@ const FarmerHome = ({ navigation }) => {
                     <Text>{item.description}</Text>
                   </View>
                 </View>
-              );
+              )
             }}
           />
         </View>
@@ -115,17 +116,21 @@ const FarmerHome = ({ navigation }) => {
                     <Text>{item.description}</Text>
                   </View>
                 </View>
-              );
+              )
             }}
           />
         </View>
 
         <TouchableOpacity
           style={styles.btn_add_card}
-          onPress={() => navigation.navigate("Image")}
-          // onPress={()=>setUploadModel(true)}
+          // onPress={() => navigation.navigate('Image')}
+          onPress={() => {
+            console.log('cliked')
+            console.log(uploadModel)
+            setUploadModel(!uploadModel)
+          }}
         >
-          <AntDesign name="pluscircle" style={styles.add_icon} />
+          <AntDesign name='pluscircle' style={styles.add_icon} />
         </TouchableOpacity>
       </View>
 
@@ -134,17 +139,17 @@ const FarmerHome = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: "white",
-            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
+            backgroundColor: 'white',
+            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-start",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
                 paddingHorizontal: 15,
               }}
             >
@@ -153,19 +158,19 @@ const FarmerHome = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require("../../assets/arrow-left.png")}
+                  source={require('../../assets/arrow-left.png')}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
             </View>
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <View
                 style={{
                   paddingHorizontal: 15,
                   paddingTop: HEIGHT * 0.03,
                   paddingBottom: 20,
-                  width: "80%",
-                  alignItems: "center",
+                  width: '80%',
+                  alignItems: 'center',
                 }}
               ></View>
 
@@ -185,8 +190,8 @@ const FarmerHome = ({ navigation }) => {
                   <Image
                     source={{ uri: image }}
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      width: '100%',
+                      height: '100%',
                     }}
                   />
                 )}
@@ -195,9 +200,9 @@ const FarmerHome = ({ navigation }) => {
               <View style={styles.button_section}>
                 <View
                   style={{
-                    width: "100%",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}
                 >
                   <TouchableOpacity
@@ -207,8 +212,8 @@ const FarmerHome = ({ navigation }) => {
                       borderColor: APP_GREEN_COLOR,
                       borderWidth: 1,
                       borderRadius: 10,
-                      alignItems: "center",
-                      justifyContent: "center",
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                     onPress={PickImage}
                   >
@@ -216,7 +221,7 @@ const FarmerHome = ({ navigation }) => {
                       style={{
                         color: APP_GREEN_COLOR,
                         fontSize: 18,
-                        fontWeight: "bold",
+                        fontWeight: 'bold',
                       }}
                     >
                       Choose Image
@@ -230,8 +235,8 @@ const FarmerHome = ({ navigation }) => {
                       borderColor: APP_GREEN_COLOR,
                       borderWidth: 1,
                       borderRadius: 10,
-                      alignItems: "center",
-                      justifyContent: "center",
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                     onPress={captchImage}
                   >
@@ -239,7 +244,7 @@ const FarmerHome = ({ navigation }) => {
                       style={{
                         color: APP_GREEN_COLOR,
                         fontSize: 18,
-                        fontWeight: "bold",
+                        fontWeight: 'bold',
                       }}
                     >
                       Take Picture
@@ -250,21 +255,21 @@ const FarmerHome = ({ navigation }) => {
                 <TouchableOpacity
                   style={{
                     height: 40,
-                    width: "40%",
+                    width: '40%',
                     backgroundColor: APP_GREEN_COLOR,
                     borderRadius: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     marginTop: 30,
                   }}
                   onPress={() => {
-                    // setUploadModel(false)
-                    // navigation.navigate("Result")
-                    captchImage();
+                    setUploadModel(false)
+                    navigation.navigate('Result')
+                    // captchImage()
                   }}
                 >
                   <Text
-                    style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}
+                    style={{ color: '#fff', fontSize: 20, fontWeight: 'bold' }}
                   >
                     Scan
                   </Text>
@@ -276,20 +281,20 @@ const FarmerHome = ({ navigation }) => {
       </BottomSheet>
       {/* <Text>hello</Text> */}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
   },
   main_container: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image_container: {
-    backgroundColor: "#dadfe6",
+    backgroundColor: '#dadfe6',
     marginBottom: 10,
   },
   image_cover: {
@@ -301,19 +306,19 @@ const styles = StyleSheet.create({
   image: {
     width: WIDTH - 20,
     height: HEIGHT * 0.25,
-    resizeMode: "stretch",
+    resizeMode: 'stretch',
     borderRadius: 5,
     marginRight: 20,
   },
   description_card: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btn_add_card: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-end",
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     marginTop: 10,
   },
   add_icon: {
@@ -321,11 +326,11 @@ const styles = StyleSheet.create({
     color: APP_GREEN_COLOR,
   },
   button_section: {
-    width: "90%",
+    width: '90%',
     height: HEIGHT * 0.17,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: HEIGHT * 0.05,
   },
-});
+})
 
-export default FarmerHome;
+export default FarmerHome

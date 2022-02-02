@@ -13,6 +13,17 @@ const AuthReducer = (state, action) => {
 
     case 'reset_context':
       return { ...state, user: {} }
+
+    case 'add_disease':
+      return { ...state, disease: action.payload }
+
+    case 'update_disease':
+      const existingDisease = state.disease
+      const remainsDisease = existingDisease.filter(
+        (dis) => dis._id !== action.payload
+      )
+      return { ...state, disease: remainsDisease }
+
     default:
       return state
   }
@@ -115,12 +126,103 @@ const tryLocalSignin =
     }
   }
 
+const signout =
+  (dispatch) =>
+  async ({ token, navigation, setshowActivityIndicator }) => {
+    try {
+      setshowActivityIndicator(true)
+      await AsyncStorage.removeItem('@TOMATO')
+      dispatch({ type: 'reset_context' })
+      setshowActivityIndicator(false)
+      navigation.navigate('Signin')
+    } catch (error) {
+      setshowActivityIndicator(false)
+      console.log(error.message)
+    }
+  }
+
+const viewReportedDisease =
+  (dispatch) =>
+  async ({ token, Alert, setshowActivityIndicator }) => {
+    try {
+      setshowActivityIndicator(true)
+      fetch(`${appApi}/users/tomato/disease`, {
+        method: 'get',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          const { disease } = res
+
+          if (res.error) {
+            setshowActivityIndicator(false)
+            Alert.alert('error', res.error.message)
+          } else {
+            setshowActivityIndicator(false)
+            dispatch({ type: 'add_disease', payload: disease })
+          }
+        })
+        .catch((error) => {
+          setshowActivityIndicator(false)
+          Alert.alert('error', 'check your network connection')
+        })
+    } catch (error) {
+      setshowActivityIndicator(false)
+      console.log(error.message)
+    }
+  }
+
+const aproveReport =
+  (dispatch) =>
+  async ({ token, comments, reportId, Alert, setshowActivityIndicator }) => {
+    try {
+      setshowActivityIndicator(true)
+      fetch(`${appApi}/users/tomato/disease/approve/${reportId}`, {
+        method: 'post',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          canSolve: true,
+          comments,
+          admitted: true,
+        }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.error) {
+            setshowActivityIndicator(false)
+            Alert.alert('error', res.error.message)
+          } else {
+            setshowActivityIndicator(false)
+            dispatch({ type: 'update_disease', payload: reportId })
+          }
+        })
+        .catch((error) => {
+          setshowActivityIndicator(false)
+          Alert.alert('error', 'check your network connection')
+        })
+    } catch (error) {
+      setshowActivityIndicator(false)
+      console.log(error.message)
+    }
+  }
+
 export const { Context, Provider } = createDataContext(
   AuthReducer,
   {
     signin,
     signup,
     tryLocalSignin,
+    signout,
+    viewReportedDisease,
+    aproveReport,
   },
-  { user: {} }
+  { user: {}, disease: [] }
 )
