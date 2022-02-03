@@ -15,12 +15,12 @@ import { Context as DataContext } from '../context/AppContext'
 const ResultScreen = ({ navigation, route }) => {
   const { report } = route.params
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
-  const { state } = useContext(useContext)
+  const { state } = useContext(DataContext)
   const { user } = state
 
   const handleAskExpert = () => {
     try {
-      setshowActivityIndicator(false)
+      setshowActivityIndicator(true)
       fetch(`${apApi}/users/askexpart`, {
         method: 'post',
         headers: {
@@ -47,6 +47,8 @@ const ResultScreen = ({ navigation, route }) => {
                 },
               ]
             )
+
+            navigation.goBack()
           }
         })
         .catch(() => {
