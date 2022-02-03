@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import {
   View,
   Text,
@@ -7,9 +7,9 @@ import {
   ScrollView,
   Image,
   StyleSheet,
-  StatusBar,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import {
   APP_GREEN_COLOR,
@@ -21,6 +21,8 @@ import {
 import { AntDesign } from '@expo/vector-icons'
 import { BottomSheet } from 'react-native-btr'
 import * as ImagePicker from 'expo-image-picker'
+import apApi from '../api/apApi'
+import { Context as DataContext } from '../context/AppContext'
 
 const perm = async () => {
   if (Platform.OS !== 'web') {
@@ -33,8 +35,13 @@ const perm = async () => {
 }
 
 const FarmerHome = ({ navigation }) => {
+  const [title, setTitle] = useState('no image was selected!')
   const [image, setImage] = useState(null)
   const [uploadModel, setUploadModel] = useState(false)
+  const [showActivityIndicator, setshowActivityIndicator] = useState(false)
+
+  const { state } = useContext(DataContext)
+  const { user } = state
 
   useEffect(() => {
     ;(async () => {
@@ -56,9 +63,7 @@ const FarmerHome = ({ navigation }) => {
       quality: 1,
     })
 
-    console.log(result)
-
-    console.log('let me call my api here')
+    setTitle('now you can scan')
     if (!result.cancelled) {
       setImage(result.uri)
     }
@@ -75,6 +80,54 @@ const FarmerHome = ({ navigation }) => {
 
     if (!result.cancelled) {
       setImage(result.uri)
+    }
+  }
+
+  const handleScan = () => {
+    if (!image) {
+      Alert.alert(
+        'error',
+        'before scanning the tomato crops you must be having an image picture in you phone. if you have it please choose image picture to upload it'
+      )
+    } else {
+      setUploadModel(false)
+      requestResponseOnModel()
+      // captchImage()
+    }
+  }
+
+  const requestResponseOnModel = () => {
+    try {
+      setshowActivityIndicator(false)
+      fetch(`${apApi}/users/askexpart`, {
+        method: 'post',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.error) {
+            setshowActivityIndicator(false)
+            Alert.alert('error', res.error.message)
+          } else {
+            const { report } = res
+            navigation.navigate('Result', {
+              report,
+            })
+          }
+        })
+        .catch(() => {
+          setshowActivityIndicator(false)
+          setshowActivityIndicator(false)
+          Alert.alert('error', 'check your network connection')
+        })
+    } catch (error) {
+      setshowActivityIndicator(false)
+      console.log(error.message)
+      Alert.alert('error', 'Something went wrong')
     }
   }
   return (
@@ -125,8 +178,6 @@ const FarmerHome = ({ navigation }) => {
           style={styles.btn_add_card}
           // onPress={() => navigation.navigate('Image')}
           onPress={() => {
-            console.log('cliked')
-            console.log(uploadModel)
             setUploadModel(!uploadModel)
           }}
         >
@@ -175,7 +226,11 @@ const FarmerHome = ({ navigation }) => {
               ></View>
 
               <TouchableOpacity onPress={PickImage}>
-                <Text style={{ fontSize: 20 }}>Take Picture</Text>
+                <Text
+                  style={{ fontSize: 20, fontWeight: 'bold', color: 'green' }}
+                >
+                  {title}
+                </Text>
               </TouchableOpacity>
 
               <View
@@ -214,6 +269,8 @@ const FarmerHome = ({ navigation }) => {
                       borderRadius: 10,
                       alignItems: 'center',
                       justifyContent: 'center',
+                      backgroundColor: 'green',
+                      width: WIDTH - 40,
                     }}
                     onPress={PickImage}
                   >
@@ -222,13 +279,15 @@ const FarmerHome = ({ navigation }) => {
                         color: APP_GREEN_COLOR,
                         fontSize: 18,
                         fontWeight: 'bold',
+                        textTransform: 'uppercase',
+                        color: APP_GREEN_COLOR,
                       }}
                     >
                       Choose Image
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     style={{
                       height: 40,
                       width: 120,
@@ -249,7 +308,7 @@ const FarmerHome = ({ navigation }) => {
                     >
                       Take Picture
                     </Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
 
                 <TouchableOpacity
@@ -262,11 +321,7 @@ const FarmerHome = ({ navigation }) => {
                     justifyContent: 'center',
                     marginTop: 30,
                   }}
-                  onPress={() => {
-                    setUploadModel(false)
-                    navigation.navigate('Result')
-                    // captchImage()
-                  }}
+                  onPress={handleScan}
                 >
                   <Text
                     style={{ color: '#fff', fontSize: 20, fontWeight: 'bold' }}
@@ -279,7 +334,19 @@ const FarmerHome = ({ navigation }) => {
           </ScrollView>
         </View>
       </BottomSheet>
-      {/* <Text>hello</Text> */}
+      {showActivityIndicator ? (
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            left: 0,
+            height: HEIGHT / 2,
+          }}
+        >
+          <ActivityIndicator size='large' color='red' />
+        </View>
+      ) : null}
     </View>
   )
 }
