@@ -11,6 +11,7 @@ import {
 import { APP_GREEN_COLOR, HEIGHT, WIDTH } from '../contansts/constants'
 import apApi from '../api/apApi'
 import { Context as DataContext } from '../context/AppContext'
+import { normal } from "../libs/constants"
 
 const ResultScreen = ({ navigation, route }) => {
   const { report } = route.params
@@ -31,12 +32,11 @@ const ResultScreen = ({ navigation, route }) => {
       })
         .then((response) => response.json())
         .then((res) => {
-          if (res.error) {
-            setshowActivityIndicator(false)
+          setshowActivityIndicator(false)
+          if (res.error) {            
             Alert.alert('error', res.error.message)
           } else {
             const { report } = res
-            setshowActivityIndicator(false)
             Alert.alert(
               'System Message',
               'Your report to the Agronomist expert is well recieved, you should consult your nearest agriculture clinic for the advise.',
@@ -76,12 +76,13 @@ const ResultScreen = ({ navigation, route }) => {
       </Text>
       <Text style={styles.disease_result}>{report.disease.name}</Text>
       <View style={styles.disease_desciption}>
+        <Text style = {{fontWeight: 'bold', fontSize: 20, textAlign: 'center', borderBottomColor: 'grey', borderBottomWidth: 0.5, paddingBottom: 10}}> Description</Text>
         <Text style={styles.disease_desciption_text}>
           {report.disease.description}
         </Text>
       </View>
 
-      <View style={styles.btn_group}>
+      <View style={[styles.btn_group, { justifyContent:  report.disease.name === normal.name ? 'center' : 'space-between'}]}>
         <TouchableOpacity
           style={styles.btn_ok}
           onPress={() => navigation.goBack()}
@@ -89,14 +90,20 @@ const ResultScreen = ({ navigation, route }) => {
           <Text style={styles.btn_ok_text}>okey</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.btn_ask_export]}
-          onPress={handleAskExpert}
-        >
-          <Text style={[styles.btn_ok_text, { color: APP_GREEN_COLOR }]}>
-            Ask expert
-          </Text>
-        </TouchableOpacity>
+        {
+          report.disease.name === normal.name ? null :
+          (
+            <TouchableOpacity
+              style={[styles.btn_ask_export]}
+              onPress={handleAskExpert}
+            >
+              <Text style={[styles.btn_ok_text, { color: APP_GREEN_COLOR }]}>
+                Ask expert
+              </Text>
+            </TouchableOpacity>
+          )
+        }
+        
       </View>
 
       {showActivityIndicator ? (
@@ -132,11 +139,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: APP_GREEN_COLOR,
     marginVertical: HEIGHT * 0.05,
+    textAlign: 'center'
   },
   disease_desciption: {
     width: WIDTH - 60,
   },
   disease_desciption_text: {
+    paddingTop: 10,
     fontSize: 18,
   },
   btn_group: {

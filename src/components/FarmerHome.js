@@ -23,6 +23,7 @@ import { BottomSheet } from 'react-native-btr'
 import * as ImagePicker from 'expo-image-picker'
 import apApi from '../api/apApi'
 import { Context as DataContext } from '../context/AppContext'
+import { diseaseContainer } from "../libs/constants"
 
 const perm = async () => {
   if (Platform.OS !== 'web') {
@@ -39,6 +40,7 @@ const FarmerHome = ({ navigation }) => {
   const [image, setImage] = useState(null)
   const [uploadModel, setUploadModel] = useState(false)
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
+  const [upload, setUpload] = useState({})
 
   const { state } = useContext(DataContext)
   const { user } = state
@@ -55,6 +57,17 @@ const FarmerHome = ({ navigation }) => {
     })()
   }, [image])
 
+
+  useEffect(()=>{
+    const unsubscribe = navigation.addListener('focus', ()=>{
+      if(!image){
+        setTitle('no image was selected!')
+      }
+    })
+
+    return unsubscribe;
+  }, [navigation])
+
   const PickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -65,6 +78,7 @@ const FarmerHome = ({ navigation }) => {
 
     setTitle('now you can scan')
     if (!result.cancelled) {
+      setUpload(result)
       setImage(result.uri)
     }
   }
@@ -89,35 +103,54 @@ const FarmerHome = ({ navigation }) => {
         'error',
         'before scanning the tomato crops you must be having an image picture in you phone. if you have it please choose image picture to upload it'
       )
-
-      // this is a changes
     } else {
       setUploadModel(false)
       requestResponseOnModel()
-      // captchImage()
     }
   }
 
+  const findDisease = (dis)=>{
+    const disease =  diseaseContainer.find((item)=> item.name === dis)
+    return disease ? disease : {name: 'not found', description: 'not found'}
+  }
+
+
   const requestResponseOnModel = () => {
+    let data = new FormData();
+    data.append('file', {
+      uri: image,
+      name: `tomatoLeaf.${image.substring(image.length - 7).split('.') [1]}`,
+      type: `image/${image.substring(image.length - 7).split('.') [1]}`
+    });
+    const config = {
+      method: "POST",
+      body: data,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    };
+
     try {
-      setshowActivityIndicator(false)
-      fetch(`${apApi}/users/askexpart`, {
-        method: 'post',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
-        },
-      })
+      setshowActivityIndicator(true)
+      fetch('https://tomatokiza.herokuapp.com/predict/', config)
         .then((response) => response.json())
         .then((res) => {
-          if (res.error) {
+          setshowActivityIndicator(false)
+          if (res.message) {
             setshowActivityIndicator(false)
-            Alert.alert('error', res.error.message)
+            Alert.alert('error', res.message)
           } else {
-            const { report } = res
+
+            setUpload({})
+            setImage(null)
+
+            const disease = {
+              name: res,
+              description: findDisease(res).description
+            }
+        
             navigation.navigate('Result', {
-              report,
+              report : {disease},
             })
           }
         })
@@ -128,7 +161,6 @@ const FarmerHome = ({ navigation }) => {
         })
     } catch (error) {
       setshowActivityIndicator(false)
-      console.log(error.message)
       Alert.alert('error', 'Something went wrong')
     }
   }
