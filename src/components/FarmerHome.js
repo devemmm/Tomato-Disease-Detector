@@ -89,6 +89,8 @@ const FarmerHome = ({ navigation }) => {
         'error',
         'before scanning the tomato crops you must be having an image picture in you phone. if you have it please choose image picture to upload it'
       )
+
+      // this is a changes
     } else {
       setUploadModel(false)
       requestResponseOnModel()
