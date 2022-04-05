@@ -132,7 +132,7 @@ const signout =
     try {
       setshowActivityIndicator(true)
       await AsyncStorage.removeItem('@TOMATO')
-      dispatch({ type: 'reset_context' })
+      // dispatch({ type: 'reset_context' })
       setshowActivityIndicator(false)
       navigation.navigate('Signin')
     } catch (error) {
