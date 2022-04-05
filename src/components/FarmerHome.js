@@ -110,7 +110,7 @@ const FarmerHome = ({ navigation }) => {
   }
 
   const findDisease = (dis)=>{
-    const disease =  diseaseContainer.find((item)=> item.name === dis)
+    const disease =  diseaseContainer.find((item)=> item.name.toLowerCase() === dis.toLowerCase())
     return disease ? disease : {name: 'not found', description: 'not found'}
   }
 

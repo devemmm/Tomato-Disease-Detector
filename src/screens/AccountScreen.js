@@ -40,21 +40,14 @@ const AccountScreen = ({ navigation }) => {
     fname: user.fname,
     lname: user.lname,
   })
-  // const [newUserLocation, setNewUserLocation] = useState({
-  //   province: user.location.province,
-  //   district: user.location.district,
-  //   sector: user.location.sector,
-  //   village: user.location.village,
-  //   cell: user.location.cell,
-  // })
-
   const [newUserLocation, setNewUserLocation] = useState({
-    province: '',
-    district: '',
-    sector: '',
-    village: '',
-    cell: '',
+    province: user.location.province,
+    district: user.location.district,
+    sector: user.location.sector,
+    village: user.location.village,
+    cell: user.location.cell,
   })
+
   return (
     <View style={styles.container}>
       <StatusBar animated={true} backgroundColor={APP_GREEN_COLOR} />
@@ -257,6 +250,26 @@ const AccountScreen = ({ navigation }) => {
                   >
                     Save
                   </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style ={{width: '100%', backgroundColor: '#f5f3f0', borderRadius: 10, marginTop: 30}}>
+                <Text style = {{textAlign: 'center', fontWeight: 'bold', fontSize: 20, marginTop: 20, borderBottomColor: 'grey', borderBottomWidth: 0.5, paddingBottom: 10}}>Security</Text>
+                <TextInput
+                  placeholder='Current password'
+                  style={styles.security_input}
+                />
+                <TextInput
+                  placeholder='New password'
+                  style={styles.security_input}
+                />
+                <TextInput
+                  placeholder='Confirm password'
+                  style={styles.security_input}
+                />
+
+                <TouchableOpacity style={{backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
+                  <TextInput style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold', paddingVertical: 10}}>Update Password</TextInput>
                 </TouchableOpacity>
               </View>
             </View>
@@ -493,6 +506,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
   },
+  security_input: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    marginTop: 10,
+    borderRadius: 10,
+    paddingLeft: 20,
+    fontSize: 18
+  }
 })
 
 export default AccountScreen
