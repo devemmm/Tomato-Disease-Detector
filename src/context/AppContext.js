@@ -12,7 +12,7 @@ const AuthReducer = (state, action) => {
       return { ...state, user: action.payload }
 
     case 'reset_context':
-      return { ...state, user: {} }
+      return { ...state, user: {}, disease: []}
 
     case 'add_disease':
       return { ...state, disease: action.payload }

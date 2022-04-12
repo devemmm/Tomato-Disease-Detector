@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -30,6 +30,15 @@ const SigninScreen = ({ navigation }) => {
     }
   }
 
+
+  useEffect(()=>{
+    const unsubscribe = navigation.addListener('focus', ()=>{
+      setActivityIndictor(false)
+    })
+
+    return unsubscribe;
+
+  }, [navigation])
   return (
     <View style={styles.container}>
       <View style={styles.header}>

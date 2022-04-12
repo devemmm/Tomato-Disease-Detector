@@ -13,13 +13,13 @@ import apApi from '../api/apApi'
 import { Context as DataContext } from '../context/AppContext'
 import { normal } from "../libs/constants"
 
-const ResultScreen = ({ navigation, route }) => {
+const ResultScreen = ({ navigation, route, disease }) => {
   const { report } = route.params
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
   const { state } = useContext(DataContext)
   const { user } = state
 
-  const handleAskExpert = () => {
+  const handleAskExpert = ({}) => {
     try {
       setshowActivityIndicator(true)
       fetch(`${apApi}/users/askexpart`, {
@@ -29,6 +29,7 @@ const ResultScreen = ({ navigation, route }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`,
         },
+        body: JSON.stringify(report.disease)
       })
         .then((response) => response.json())
         .then((res) => {

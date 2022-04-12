@@ -3,10 +3,12 @@ import {
   View,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
   ScrollView,
   StatusBar,
   TextInput,
   StyleSheet,
+  Alert,
   Image,
 } from 'react-native'
 import {
@@ -26,6 +28,7 @@ import {
 } from '@expo/vector-icons'
 import { Context as DataContext } from '../context/AppContext'
 import AppActivityIndictor from '../components/AppActivityIndicator'
+import appApi from "../api/apApi"
 
 const AccountScreen = ({ navigation }) => {
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
@@ -41,12 +44,115 @@ const AccountScreen = ({ navigation }) => {
     lname: user.lname,
   })
   const [newUserLocation, setNewUserLocation] = useState({
+    country: user.location.country,
     province: user.location.province,
     district: user.location.district,
     sector: user.location.sector,
-    village: user.location.village,
-    cell: user.location.cell,
+    cell: user.location.cell
   })
+
+
+
+  const [credentials, setCredentials] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+
+
+  const handleUpdateUserInfo = ()=>{
+
+    // console.log({
+    //   fname: newUserData.fname,
+    //       lname: newUserData.lname,
+    //       location: newUserLocation
+    // })
+    try {
+      setshowActivityIndicator(true)
+      fetch(`${appApi}/users/profile`, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          fname: newUserData.fname,
+          lname: newUserData.lname,
+          location: newUserLocation
+        })
+      })
+        .then((response)=> response.json())
+        .then((res)=>{
+          setshowActivityIndicator(false)
+          if(res.error){
+            return Alert.alert('error', res.error.message)
+          }
+          
+          setProfile(false)
+          signout({ token: 'usgk', navigation, setshowActivityIndicator })
+          Alert.alert('successfull', res.message)
+        })    
+        .catch((error)=>{
+          setshowActivityIndicator(false)
+          Alert.alert('error', 'check your network connection')
+        })  
+      
+    } catch (error) {
+      setshowActivityIndicator(false)
+      alert(error.message)
+    }
+  }
+
+
+
+  const handleChangePassword = ()=>{
+    try {
+
+      if(credentials.newPassword !== credentials.confirmPassword){
+        throw new Error('both new Password and confirm password should be matching please try again')
+      }
+
+      if(credentials.newPassword.length < 6 || credentials.currentPassword.length < 6){
+        throw new Error('please both current password, new password and confirm password should not be under 6 in length. try again')
+      }
+
+      setshowActivityIndicator(true)
+      fetch(`${appApi}/users/profile?type=password`, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          ...credentials
+        })
+      })
+        .then((response)=> response.json())
+        .then((res)=>{
+          setshowActivityIndicator(false)
+          if(res.error){
+            return Alert.alert('error',`${res.error.message}`)
+          }
+
+          setCredentials({
+            ...credentials,
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          })
+          Alert.alert('successfull','password changed successfull')
+        })    
+        .catch((error)=>{
+          setshowActivityIndicator(false)
+          Alert.alert('error', 'check your network connection')
+        })  
+    } catch (error) {
+      setshowActivityIndicator(false)
+      Alert.alert('error', error.message)
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -77,7 +183,7 @@ const AccountScreen = ({ navigation }) => {
           />
           <View>
             <Text style={{ fontSize: 16 }}>Profile</Text>
-            <Text style={{ color: 'grey' }}>Comprete Profile here</Text>
+            <Text style={{ color: 'grey' }}>Complete Profile here</Text>
           </View>
         </TouchableOpacity>
 
@@ -88,7 +194,7 @@ const AccountScreen = ({ navigation }) => {
           <MaterialIcons name='privacy-tip' style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>Term & Privacy</Text>
-            <Text style={{ color: 'grey' }}>ready the term and condition</Text>
+            <Text style={{ color: 'grey' }}>read the term and condition here</Text>
           </View>
         </TouchableOpacity>
 
@@ -104,7 +210,7 @@ const AccountScreen = ({ navigation }) => {
           <AntDesign name='infocirlce' style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>About Us</Text>
-            <Text style={{ color: 'grey' }}>Comprete Profile here</Text>
+            <Text style={{ color: 'grey' }}>historical background</Text>
           </View>
         </TouchableOpacity>
 
@@ -243,7 +349,7 @@ const AccountScreen = ({ navigation }) => {
                     alignItems: 'center',
                     borderRadius: 10,
                   }}
-                  onPress={() => setProfile(false)}
+                  onPress={handleUpdateUserInfo}
                 >
                   <Text
                     style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}
@@ -253,23 +359,49 @@ const AccountScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
 
+            
+              {
+                showActivityIndicator ? <ActivityIndicator size='large' color='red' /> : null
+              }
+
               <View style ={{width: '100%', backgroundColor: '#f5f3f0', borderRadius: 10, marginTop: 30}}>
                 <Text style = {{textAlign: 'center', fontWeight: 'bold', fontSize: 20, marginTop: 20, borderBottomColor: 'grey', borderBottomWidth: 0.5, paddingBottom: 10}}>Security</Text>
                 <TextInput
                   placeholder='Current password'
                   style={styles.security_input}
+                  autoCapitalize= "none"
+                  autoComplete={false}
+                  autoCorrect={false}
+                  secureTextEntry
+                  value = {credentials.currentPassword}
+                  onChangeText = {(value)=> setCredentials({ ...credentials, currentPassword: value})}
                 />
                 <TextInput
                   placeholder='New password'
                   style={styles.security_input}
+                  autoCapitalize= "none"
+                  autoComplete={false}
+                  autoCorrect={false}
+                  value = {credentials.newPassword}
+                  secureTextEntry
+                  onChangeText = {(value)=> setCredentials({ ...credentials, newPassword: value})}
                 />
                 <TextInput
                   placeholder='Confirm password'
                   style={styles.security_input}
+                  autoCapitalize= "none"
+                  autoComplete={false}
+                  autoCorrect={false}
+                  secureTextEntry
+                  value = {credentials.confirmPassword}
+                  onChangeText = {(value)=> setCredentials({ ...credentials, confirmPassword: value})}
                 />
 
-                <TouchableOpacity style={{backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
-                  <TextInput style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold', paddingVertical: 10}}>Update Password</TextInput>
+                <TouchableOpacity
+                  style={{backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', marginTop: 20, borderRadius: 15}}
+                    onPress = {handleChangePassword}
+                  >
+                  <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold', paddingVertical: 10}}>Update Password</Text>
                 </TouchableOpacity>
               </View>
             </View>

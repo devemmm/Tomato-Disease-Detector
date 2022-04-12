@@ -15,18 +15,53 @@ import {
 import { APP_GREEN_COLOR, HEIGHT, WIDTH } from '../contansts/constants'
 import { Feather } from '@expo/vector-icons'
 import { Context as DataContext } from '../context/AppContext'
+import appApi from "../api/apApi"
 
-const AdHome = () => {
+const AdHome = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [message, setMessage] = useState('')
   const [id, setId] = useState(null)
-  const { state, viewReportedDisease, aproveReport } = useContext(DataContext)
-  const { disease, user } = state
+  const { state, aproveReport } = useContext(DataContext)
+  const { user } = state
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
+  
+  const [disease, setDisease] = useState([])
 
   useEffect(() => {
-    viewReportedDisease({ token: user.token, Alert, setshowActivityIndicator })
-  }, [])
+    const unsubscribe = navigation.addListener('focus', ()=>{
+      try {
+        setDisease([])
+        setshowActivityIndicator(true)
+        fetch(`${appApi}/users/tomato/disease`, {
+          method: 'get',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            if (res.error) {
+              setshowActivityIndicator(false)
+              Alert.alert('error', res.error.message)
+            } else {
+              setshowActivityIndicator(false)
+              setDisease(res.disease)
+            }
+          })
+          .catch((error) => {
+            setshowActivityIndicator(false)
+            Alert.alert('error', 'check your network connection')
+          })
+      } catch (error) {
+        setshowActivityIndicator(false)
+        console.log(error.message)
+      }
+    })
+  
+    return unsubscribe;
+  }, [navigation])
 
   return (
     <View style={{ flex: 1 }}>
@@ -60,7 +95,7 @@ const AdHome = () => {
                       <Text style={styles.fam_label}>Famer:</Text>
                       <Text style={{ fontWeight: 'bold' }}>
                         {' '}
-                        Emmanuel RUKUNDO
+                        {item.farmer.fname} {item.farmer.lname}
                       </Text>
                     </View>
                     <View style={styles.fam_item}>
@@ -71,7 +106,7 @@ const AdHome = () => {
                       <Text style={styles.fam_label}>Location:</Text>
                       <Text style={{ fontWeight: 'bold' }}>
                         {' '}
-                        Gasabo, Kimironko
+                        {item.location.district}, {item.location.sector}
                       </Text>
                     </View>
 
@@ -106,14 +141,11 @@ const AdHome = () => {
                               fontWeight: 'bold',
                             }}
                           >
-                            Disease Example
+                            {item.disease.name}
                           </Text>
                         </View>
                         <Text style={{ paddingLeft: 3, fontSize: 16 }}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Aenean eget feugiat sem, id viverra lectus.
-                          Vestibulum semper, ex a interdum tristique, est justo
-                          aliquam turpis, eget bibendum turpis leo sit amet eros
+                          {item.disease.description}
                         </Text>
                       </ScrollView>
                       <TouchableOpacity

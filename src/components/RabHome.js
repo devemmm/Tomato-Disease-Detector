@@ -2,7 +2,9 @@ import React, { useState, useEffect, useContext } from 'react'
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
+  ActivityIndicator,
   FlatList,
   Modal,
   Image,
@@ -20,13 +22,16 @@ import {
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { Context as DataContext } from '../context/AppContext'
+import appApi from "../api/apApi"
 
 const RabHome = ({ navigation }) => {
   const [image, setImage] = useState(null)
-  const [modalVisible, setModalVisible] = useState(true)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalUserVisible, setModalUserVisible ] = useState(false)
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
   const { state, viewReportedDisease } = useContext(DataContext)
   const { user } = state
+  const [phone, setPhone ] = useState('')
 
   useEffect(() => {
     viewReportedDisease({ token: user.token, Alert, setshowActivityIndicator })
@@ -69,6 +74,95 @@ const RabHome = ({ navigation }) => {
       setImage(result.uri)
     }
   }
+
+
+  // const handleChangeUserType = ({type})=>{
+  //   try{
+
+  //     if(!phone){
+  //       throw new Error('user phone number must be required')
+  //     }
+
+  //     if(phone.length < 10 || phone.length > 10){
+  //       throw new Error("user phone number should be 10 in length")
+  //     }
+
+  //     fetch(`${appApi}/users/profile?type=userType`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${user.token}`,
+  //       },
+  //       body: JSON.stringify({
+  //         phone: '0788596281',
+  //         userType: 'admin'
+  //       })
+  //       .then((response)=> response.json())
+  //       .then((res)=>{
+  //         setshowActivityIndicator(false)
+  //         if(res.error){
+  //           return Alert.alert('error', res.error.message)
+  //         }
+          
+  //         Alert.alert('successfull', res.message)
+  //         setModalUserVisible(!modalUserVisible)
+  //       })    
+  //       .catch((error)=>{
+  //         setshowActivityIndicator(false)
+  //         Alert.alert('error', 'check your network connection')
+  //       }) 
+  //     })
+  //   }catch(error){
+  //     Alert.alert('error', error.message)
+  //   }
+  // }
+
+
+  const handleChangeUserType = ({type})=>{
+    try {
+      if(!phone){
+        throw new Error('user phone number must be required')
+      }
+
+      if(phone.length < 10 || phone.length > 10){
+        throw new Error("user phone number should be 10 in length")
+      }
+
+      setshowActivityIndicator(true)
+      fetch(`${appApi}/users/profile?type=userType`, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          phone,
+          userType: type
+        })
+      })
+        .then((response)=> response.json())
+        .then((res)=>{
+          setshowActivityIndicator(false)
+          if(res.error){
+            setModalUserVisible(!modalUserVisible)
+            return Alert.alert('error',`${res.error.message}`)
+          }
+
+          setPhone('');
+          setModalUserVisible(!modalUserVisible)
+          Alert.alert('successfull','user account modified successfull')
+        })    
+        .catch((error)=>{
+          setshowActivityIndicator(false)
+          Alert.alert('error', 'check your network connection')
+        })  
+    } catch (error) {
+      Alert.alert('error', error.message)
+    }
+  }
+
   return (
     <View>
       <View style={styles.main_container}>
@@ -146,6 +240,7 @@ const RabHome = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={()=> setModalUserVisible(true)}
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
@@ -211,6 +306,85 @@ const RabHome = ({ navigation }) => {
               >
                 <Text style={styles.modelReportBtnText}>District</Text>
               </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modalUserVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.')
+          setModalUserVisible(!modalUserVisible)
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={{ height: 200, width: '100%' }}>
+              <Text style={{fontSize: 15, fontWeight: 'bold', textAlign: 'center', textTransform: 'capitalize', marginBottom: 10}}>update user account here</Text>
+              <TextInput
+                style = {{
+                  borderColor: 'grey',
+                  borderWidth: 1,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  textAlign: 'center',
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }}
+                placeholder="phone number"
+                autoCorrect={false}
+                autoCapitalize='none'
+                keyboardType='number-pad'
+                maxLength={10}
+                value={phone}
+                onChangeText={(value)=> setPhone(value)}
+              />
+
+              <View>
+                {
+                  showActivityIndicator ? <ActivityIndicator size='small' color='red' /> : null
+                }
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: 40
+                  }}>
+                  <TouchableOpacity 
+                    onPress={()=> handleChangeUserType({type: 'farmer'})}
+                    style={styles.actionButton}>
+                    <Text style={styles.actionButtonText}>Farmer</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    onPress={()=> handleChangeUserType({type: 'sector'})}
+                    style={styles.actionButton}>
+                    <Text style={styles.actionButtonText}>Sector</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: 20
+                  }}>
+                  <TouchableOpacity 
+                    onPress={()=> handleChangeUserType({type: 'district'})}
+                    style={styles.actionButton}>
+                    <Text style={styles.actionButtonText}>District</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    onPress={()=> handleChangeUserType({type: 'rab'})}
+                    style={styles.actionButton}>
+                    <Text style={styles.actionButtonText}>Rab</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </View>
         </View>
@@ -326,6 +500,18 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: HEIGHT * 0.03,
   },
+  actionButton: {
+    backgroundColor: 'red',
+    width: '40%',
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5
+  },
+  actionButtonText:{
+    fontSize: 18, 
+    fontWeight: 'bold'
+  }
 })
 
 export default RabHome
