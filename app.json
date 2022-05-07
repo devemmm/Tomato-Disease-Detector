@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "tdd-mob",
-    "slug": "tdd-mob",
+    "name": "Plant_Diseases_Detector_MS",
+    "slug": "Plant_Diseases_Detector_MS",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
