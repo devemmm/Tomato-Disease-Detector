@@ -77,9 +77,8 @@ const UserScreen = ({ navigation }) => {
       Alert.alert("error", "password length should be less than 6");
       return "stop";
     } else {
-      console.log("let me create");
       setActivityIndictor(true);
-      fetch(`${apApi}/rab/register/user`, {
+      fetch(`${apApi}/users/signup`, {
         method: "post",
         headers: {
           Accept: "application/json",
@@ -97,14 +96,15 @@ const UserScreen = ({ navigation }) => {
 
           const { error, statusCode } = res;
           if (error) {
-            console.log("error here");
-            console.log(error);
             return Alert.alert("error", error.message);
           }
 
           if (statusCode === 201) {
             cleanField();
-            Alert.alert("success", res.message);
+            Alert.alert(
+              "success",
+              "System User account created successfull.. now he/she can login on any device throw Tomato Disease Ditector Application"
+            );
             return navigation.navigate("MainFlow");
           }
         })

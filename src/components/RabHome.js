@@ -20,7 +20,7 @@ import {
   normalTomatoes,
   affectedTomatoes,
 } from "../contansts/constants";
-import { AntDesign, Ionicons, Entypo } from "@expo/vector-icons";
+import { AntDesign, Ionicons, MaterialIcons, Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Context as DataContext } from "../context/AppContext";
 import appApi from "../api/apApi";
@@ -165,6 +165,44 @@ const RabHome = ({ navigation }) => {
   const handleCreateUser = () => {
     setModalUserVisible(false);
     navigation.navigate("User");
+  };
+
+  const handleDeleteUser = () => {
+    if (phone.length !== 10) {
+      Alert.alert("error", "phone number must be 10 in length");
+    } else {
+      setshowActivityIndicator(true);
+      fetch(`${appApi}/rab/user/${phone}`, {
+        method: "delete",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.user.token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          setshowActivityIndicator(false);
+
+          const { error, status } = res;
+          if (error) {
+            return Alert.alert(
+              "error",
+              res.errorMessage ? res.errorMessage : error.message
+            );
+          }
+
+          if (status !== 400) {
+            setModalUserVisible(!modalUserVisible);
+            Alert.alert("success", "user deleted successfull");
+            return navigation.navigate("MainFlow");
+          }
+        })
+        .catch((error) => {
+          setshowActivityIndicator(false);
+          Alert.alert("error", "something went wrong");
+        });
+    }
   };
   return (
     <View>
@@ -334,18 +372,31 @@ const RabHome = ({ navigation }) => {
                     color="black"
                     onPress={handleCreateUser}
                   />
+
+                  {phone.length === 10 ? (
+                    <MaterialIcons
+                      style={{ marginLeft: 10 }}
+                      name="delete"
+                      size={24}
+                      color="red"
+                      onPress={handleDeleteUser}
+                    />
+                  ) : null}
                 </View>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    textTransform: "capitalize",
-                    // marginBottom: ,
-                  }}
-                >
-                  update user account here
-                </Text>
+                {phone.length === 0 ? (
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      textTransform: "capitalize",
+                      color: "red",
+                      // marginBottom: ,
+                    }}
+                  >
+                    update user account here
+                  </Text>
+                ) : null}
                 <TextInput
                   style={{
                     borderColor: "grey",
@@ -365,55 +416,72 @@ const RabHome = ({ navigation }) => {
                   onChangeText={(value) => setPhone(value)}
                 />
 
-                <View>
+                <View
+                  style={{
+                    flex: 1,
+                    alignContent: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   {showActivityIndicator ? (
-                    <ActivityIndicator size="small" color="red" />
+                    <ActivityIndicator size="large" color="red" />
                   ) : null}
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginTop: 40,
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => handleChangeUserType({ type: "farmer" })}
-                      style={styles.actionButton}
-                    >
-                      <Text style={styles.actionButtonText}>Farmer</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity
-                      onPress={() => handleChangeUserType({ type: "sector" })}
-                      style={styles.actionButton}
-                    >
-                      <Text style={styles.actionButtonText}>Sector</Text>
-                    </TouchableOpacity>
-                  </View>
+                  {showActivityIndicator ? null : (
+                    <>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginTop: 40,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() =>
+                            handleChangeUserType({ type: "farmer" })
+                          }
+                          style={styles.actionButton}
+                        >
+                          <Text style={styles.actionButtonText}>Farmer</Text>
+                        </TouchableOpacity>
 
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginTop: 20,
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => handleChangeUserType({ type: "district" })}
-                      style={styles.actionButton}
-                    >
-                      <Text style={styles.actionButtonText}>District</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            handleChangeUserType({ type: "sector" })
+                          }
+                          style={styles.actionButton}
+                        >
+                          <Text style={styles.actionButtonText}>Sector</Text>
+                        </TouchableOpacity>
+                      </View>
 
-                    <TouchableOpacity
-                      onPress={() => handleChangeUserType({ type: "rab" })}
-                      style={styles.actionButton}
-                    >
-                      <Text style={styles.actionButtonText}>Rab</Text>
-                    </TouchableOpacity>
-                  </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginTop: 20,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() =>
+                            handleChangeUserType({ type: "district" })
+                          }
+                          style={styles.actionButton}
+                        >
+                          <Text style={styles.actionButtonText}>District</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => handleChangeUserType({ type: "rab" })}
+                          style={styles.actionButton}
+                        >
+                          <Text style={styles.actionButtonText}>Rab</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
                 </View>
               </View>
             </View>
@@ -473,6 +541,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
+    height: 300,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -547,8 +616,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     borderRadius: 8,
     height: 20,
+    flexDirection: "row",
     alignItems: "flex-end",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     marginBottom: 20,
   },
 });

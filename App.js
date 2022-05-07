@@ -1,4 +1,5 @@
 import React from "react";
+import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -19,6 +20,8 @@ import { Provider as AuthProvider } from "./src/context/AppContext";
 const stack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 const MainFlow = () => {
   return (
     <tab.Navigator
