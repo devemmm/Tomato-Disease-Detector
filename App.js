@@ -1,91 +1,92 @@
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
-import SplashScreen from './src/screens/SplashScreen'
-import SigninScreen from './src/screens/SigninScreen'
-import SignupScreen from './src/screens/SignupScreen'
-import AccountScreen from './src/screens/AccountScreen'
-import HomeScreen from './src/screens/HomeScreen'
-import ResultScreen from './src/screens/ResultScreen'
-import ReportScreen from './src/screens/ReportScreen'
-import ImageScreen from './src/components/ImageScreen'
-import { APP_GREEN_COLOR } from './src/contansts/constants'
-import { Provider as AuthProvider } from './src/context/AppContext'
+import SplashScreen from "./src/screens/SplashScreen";
+import SigninScreen from "./src/screens/SigninScreen";
+import SignupScreen from "./src/screens/SignupScreen";
+import AccountScreen from "./src/screens/AccountScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+import ResultScreen from "./src/screens/ResultScreen";
+import ReportScreen from "./src/screens/ReportScreen";
+import ImageScreen from "./src/components/ImageScreen";
+import UserScreen from "./src/screens/UserScreen";
+import { APP_GREEN_COLOR } from "./src/contansts/constants";
+import { Provider as AuthProvider } from "./src/context/AppContext";
 
-const stack = createStackNavigator()
-const tab = createBottomTabNavigator()
+const stack = createStackNavigator();
+const tab = createBottomTabNavigator();
 
 const mainFlow = () => {
   return (
     <tab.Navigator
-      initialRouteName='Home'
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          if (route.name === 'Home') {
+          if (route.name === "Home") {
             return (
               <FontAwesome5
-                name={focused ? 'indent' : 'indent'}
+                name={focused ? "indent" : "indent"}
                 size={size}
                 color={color}
               />
-            )
-          } else if (route.name === 'Account') {
+            );
+          } else if (route.name === "Account") {
             return (
               <MaterialCommunityIcons
-                name={focused ? 'account' : 'account'}
+                name={focused ? "account" : "account"}
                 size={size}
                 color={color}
               />
-            )
+            );
           }
         },
-        tabBarInactiveTintColor: 'grey',
+        tabBarInactiveTintColor: "grey",
         tabBarActiveTintColor: APP_GREEN_COLOR,
       })}
     >
       <tab.Screen
-        name='Home'
+        name="Home"
         component={HomeScreen}
         options={{
-          title: 'Home',
+          title: "Home",
           headerStyle: {
             backgroundColor: APP_GREEN_COLOR,
           },
-          headerTintColor: '#fff',
+          headerTintColor: "#fff",
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: "bold",
           },
-          headerTitleAlign: 'center',
+          headerTitleAlign: "center",
         }}
       />
       <tab.Screen
-        name='Account'
+        name="Account"
         component={AccountScreen}
         options={{
-          title: 'Account',
+          title: "Account",
           headerStyle: {
             backgroundColor: APP_GREEN_COLOR,
           },
-          headerTintColor: '#fff',
+          headerTintColor: "#fff",
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: "bold",
           },
-          headerTitleAlign: 'center',
+          headerTitleAlign: "center",
         }}
       />
     </tab.Navigator>
-  )
-}
+  );
+};
 
 const App = () => {
   return (
     <NavigationContainer>
       <stack.Navigator>
         <stack.Screen
-          name='Splash'
+          name="Splash"
           component={SplashScreen}
           options={{
             headerShown: false,
@@ -93,7 +94,7 @@ const App = () => {
         />
 
         <stack.Screen
-          name='Signin'
+          name="Signin"
           component={SigninScreen}
           options={{
             headerShown: false,
@@ -101,28 +102,35 @@ const App = () => {
         />
 
         <stack.Screen
-          name='Signup'
+          name="Signup"
           component={SignupScreen}
           options={{
             headerShown: false,
           }}
         />
         <stack.Screen
-          name='mainFlow'
+          name="mainFlow"
           component={mainFlow}
           options={{
             headerShown: false,
           }}
         />
         <stack.Screen
-          name='Result'
+          name="Result"
           component={ResultScreen}
           options={{
             headerShown: false,
           }}
         />
         <stack.Screen
-          name='Report'
+          name="User"
+          component={UserScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <stack.Screen
+          name="Report"
           component={ReportScreen}
           options={{
             headerShown: false,
@@ -130,7 +138,7 @@ const App = () => {
         />
 
         <stack.Screen
-          name='Image'
+          name="Image"
           component={ImageScreen}
           options={{
             headerShown: false,
@@ -138,13 +146,13 @@ const App = () => {
         />
       </stack.Navigator>
     </NavigationContainer>
-  )
-}
+  );
+};
 
 export default () => {
   return (
     <AuthProvider>
       <App />
     </AuthProvider>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -8,43 +8,44 @@ import {
   FlatList,
   Modal,
   Image,
+  ScrollView,
   StyleSheet,
   Platform,
   Alert,
-} from 'react-native'
+} from "react-native";
 import {
   APP_GREEN_COLOR,
   HEIGHT,
   WIDTH,
   normalTomatoes,
   affectedTomatoes,
-} from '../contansts/constants'
-import { AntDesign, Ionicons } from '@expo/vector-icons'
-import * as ImagePicker from 'expo-image-picker'
-import { Context as DataContext } from '../context/AppContext'
-import appApi from "../api/apApi"
+} from "../contansts/constants";
+import { AntDesign, Ionicons, Entypo } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { Context as DataContext } from "../context/AppContext";
+import appApi from "../api/apApi";
 
 const RabHome = ({ navigation }) => {
-  const [image, setImage] = useState(null)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [modalUserVisible, setModalUserVisible ] = useState(false)
-  const [showActivityIndicator, setshowActivityIndicator] = useState(false)
-  const { state, viewReportedDisease } = useContext(DataContext)
-  const { user } = state
-  const [phone, setPhone ] = useState('')
+  const [image, setImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalUserVisible, setModalUserVisible] = useState(false);
+  const [showActivityIndicator, setshowActivityIndicator] = useState(false);
+  const { state, viewReportedDisease } = useContext(DataContext);
+  const { user } = state;
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
-    viewReportedDisease({ token: user.token, Alert, setshowActivityIndicator })
-    ;(async () => {
-      if (Platform.OS !== 'web') {
+    viewReportedDisease({ token: user.token, Alert, setshowActivityIndicator });
+    (async () => {
+      if (Platform.OS !== "web") {
         const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync()
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!')
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
         }
       }
-    })()
-  }, [])
+    })();
+  }, []);
 
   const PickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -52,29 +53,28 @@ const RabHome = ({ navigation }) => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-    })
+    });
 
-    console.log(result)
+    console.log(result);
 
     if (!result.cancelled) {
-      setImage(result.uri)
+      setImage(result.uri);
     }
-  }
+  };
 
   const captchImage = async () => {
-    setImage(null)
+    setImage(null);
     let result = await ImagePicker.launchCameraAsync({
       // mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       // aspect: [4, 3],
       // quality: 1
-    })
+    });
 
     if (!result.cancelled) {
-      setImage(result.uri)
+      setImage(result.uri);
     }
-  }
-
+  };
 
   // const handleChangeUserType = ({type})=>{
   //   try{
@@ -104,65 +104,68 @@ const RabHome = ({ navigation }) => {
   //         if(res.error){
   //           return Alert.alert('error', res.error.message)
   //         }
-          
+
   //         Alert.alert('successfull', res.message)
   //         setModalUserVisible(!modalUserVisible)
-  //       })    
+  //       })
   //       .catch((error)=>{
   //         setshowActivityIndicator(false)
   //         Alert.alert('error', 'check your network connection')
-  //       }) 
+  //       })
   //     })
   //   }catch(error){
   //     Alert.alert('error', error.message)
   //   }
   // }
 
-
-  const handleChangeUserType = ({type})=>{
+  const handleChangeUserType = ({ type }) => {
     try {
-      if(!phone){
-        throw new Error('user phone number must be required')
+      if (!phone) {
+        throw new Error("user phone number must be required");
       }
 
-      if(phone.length < 10 || phone.length > 10){
-        throw new Error("user phone number should be 10 in length")
+      if (phone.length < 10 || phone.length > 10) {
+        throw new Error("user phone number should be 10 in length");
       }
 
-      setshowActivityIndicator(true)
+      setshowActivityIndicator(true);
       fetch(`${appApi}/users/profile?type=userType`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           phone,
-          userType: type
-        })
+          userType: type,
+        }),
       })
-        .then((response)=> response.json())
-        .then((res)=>{
-          setshowActivityIndicator(false)
-          if(res.error){
-            setModalUserVisible(!modalUserVisible)
-            return Alert.alert('error',`${res.error.message}`)
+        .then((response) => response.json())
+        .then((res) => {
+          setshowActivityIndicator(false);
+          if (res.error) {
+            setModalUserVisible(!modalUserVisible);
+            return Alert.alert("error", `${res.error.message}`);
           }
 
-          setPhone('');
-          setModalUserVisible(!modalUserVisible)
-          Alert.alert('successfull','user account modified successfull')
-        })    
-        .catch((error)=>{
-          setshowActivityIndicator(false)
-          Alert.alert('error', 'check your network connection')
-        })  
+          setPhone("");
+          setModalUserVisible(!modalUserVisible);
+          Alert.alert("successfull", "user account modified successfull");
+        })
+        .catch((error) => {
+          setshowActivityIndicator(false);
+          Alert.alert("error", "check your network connection");
+        });
     } catch (error) {
-      Alert.alert('error', error.message)
+      Alert.alert("error", error.message);
     }
-  }
+  };
 
+  const handleCreateUser = () => {
+    setModalUserVisible(false);
+    navigation.navigate("User");
+  };
   return (
     <View>
       <View style={styles.main_container}>
@@ -181,7 +184,7 @@ const RabHome = ({ navigation }) => {
                     <Text>{item.description}</Text>
                   </View>
                 </View>
-              )
+              );
             }}
           />
         </View>
@@ -202,7 +205,7 @@ const RabHome = ({ navigation }) => {
                     <Text>{item.description}</Text>
                   </View>
                 </View>
-              )
+              );
             }}
           />
         </View>
@@ -211,28 +214,28 @@ const RabHome = ({ navigation }) => {
           style={{
             height: 100,
             width: WIDTH,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
           }}
         >
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'pink',
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "pink",
               height: 50,
               width: 120,
               borderRadius: 10,
             }}
           >
-            <Ionicons name='document' style={styles.add_icon} />
+            <Ionicons name="document" style={styles.add_icon} />
             <Text
               style={{
-                color: 'red',
-                textTransform: 'capitalize',
+                color: "red",
+                textTransform: "capitalize",
                 fontSize: 20,
               }}
             >
@@ -240,22 +243,22 @@ const RabHome = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={()=> setModalUserVisible(true)}
+            onPress={() => setModalUserVisible(true)}
             style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'pink',
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "pink",
               height: 50,
               width: 120,
               borderRadius: 10,
             }}
           >
-            <AntDesign name='team' style={styles.add_icon} />
+            <AntDesign name="team" style={styles.add_icon} />
             <Text
               style={{
-                color: 'red',
-                textTransform: 'capitalize',
+                color: "red",
+                textTransform: "capitalize",
                 fontSize: 20,
                 marginLeft: 5,
               }}
@@ -267,21 +270,21 @@ const RabHome = ({ navigation }) => {
       </View>
 
       <Modal
-        animationType='slide'
-        transparent={true}
         visible={modalVisible}
+        animationType="slide"
+        transparent={true}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.')
-          setModalVisible(!modalVisible)
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <View style={{ height: 200, width: '100%' }}>
+            <View style={{ height: 200, width: "100%" }}>
               <TouchableOpacity
                 onPress={() => {
-                  setModalVisible(!modalVisible)
-                  navigation.navigate('Report', { type: 'farmer' })
+                  setModalVisible(!modalVisible);
+                  navigation.navigate("Report", { type: "farmer" });
                 }}
                 style={styles.modelRepportBtn}
               >
@@ -289,8 +292,8 @@ const RabHome = ({ navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setModalVisible(!modalVisible)
-                  navigation.navigate('Report', { type: 'sector' })
+                  setModalVisible(!modalVisible);
+                  navigation.navigate("Report", { type: "sector" });
                 }}
                 style={styles.modelRepportBtn}
               >
@@ -299,8 +302,8 @@ const RabHome = ({ navigation }) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  setModalVisible(!modalVisible)
-                  navigation.navigate('Report', { type: 'district' })
+                  setModalVisible(!modalVisible);
+                  navigation.navigate("Report", { type: "district" });
                 }}
                 style={styles.modelRepportBtn}
               >
@@ -312,98 +315,126 @@ const RabHome = ({ navigation }) => {
       </Modal>
 
       <Modal
-        animationType='slide'
+        animationType="slide"
         transparent={true}
         visible={modalUserVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.')
-          setModalUserVisible(!modalUserVisible)
+          Alert.alert("Modal has been closed.");
+          setModalUserVisible(!modalUserVisible);
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={{ height: 200, width: '100%' }}>
-              <Text style={{fontSize: 15, fontWeight: 'bold', textAlign: 'center', textTransform: 'capitalize', marginBottom: 10}}>update user account here</Text>
-              <TextInput
-                style = {{
-                  borderColor: 'grey',
-                  borderWidth: 1,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                  textAlign: 'center',
-                  fontSize: 20,
-                  fontWeight: 'bold'
-                }}
-                placeholder="phone number"
-                autoCorrect={false}
-                autoCapitalize='none'
-                keyboardType='number-pad'
-                maxLength={10}
-                value={phone}
-                onChangeText={(value)=> setPhone(value)}
-              />
-
-              <View>
-                {
-                  showActivityIndicator ? <ActivityIndicator size='small' color='red' /> : null
-                }
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: 40
-                  }}>
-                  <TouchableOpacity 
-                    onPress={()=> handleChangeUserType({type: 'farmer'})}
-                    style={styles.actionButton}>
-                    <Text style={styles.actionButtonText}>Farmer</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity 
-                    onPress={()=> handleChangeUserType({type: 'sector'})}
-                    style={styles.actionButton}>
-                    <Text style={styles.actionButtonText}>Sector</Text>
-                  </TouchableOpacity>
+        <ScrollView>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={{ height: 200, width: "100%" }}>
+                <View style={styles.createBtn}>
+                  <Entypo
+                    name="add-user"
+                    size={24}
+                    color="black"
+                    onPress={handleCreateUser}
+                  />
                 </View>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    textTransform: "capitalize",
+                    // marginBottom: ,
+                  }}
+                >
+                  update user account here
+                </Text>
+                <TextInput
+                  style={{
+                    borderColor: "grey",
+                    borderWidth: 1,
+                    paddingVertical: 10,
+                    borderRadius: 10,
+                    textAlign: "center",
+                    fontSize: 20,
+                    fontWeight: "bold",
+                  }}
+                  placeholder="phone number"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  keyboardType="number-pad"
+                  maxLength={10}
+                  value={phone}
+                  onChangeText={(value) => setPhone(value)}
+                />
 
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: 20
-                  }}>
-                  <TouchableOpacity 
-                    onPress={()=> handleChangeUserType({type: 'district'})}
-                    style={styles.actionButton}>
-                    <Text style={styles.actionButtonText}>District</Text>
-                  </TouchableOpacity>
+                <View>
+                  {showActivityIndicator ? (
+                    <ActivityIndicator size="small" color="red" />
+                  ) : null}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginTop: 40,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleChangeUserType({ type: "farmer" })}
+                      style={styles.actionButton}
+                    >
+                      <Text style={styles.actionButtonText}>Farmer</Text>
+                    </TouchableOpacity>
 
-                  <TouchableOpacity 
-                    onPress={()=> handleChangeUserType({type: 'rab'})}
-                    style={styles.actionButton}>
-                    <Text style={styles.actionButtonText}>Rab</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => handleChangeUserType({ type: "sector" })}
+                      style={styles.actionButton}
+                    >
+                      <Text style={styles.actionButtonText}>Sector</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginTop: 20,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => handleChangeUserType({ type: "district" })}
+                      style={styles.actionButton}
+                    >
+                      <Text style={styles.actionButtonText}>District</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => handleChangeUserType({ type: "rab" })}
+                      style={styles.actionButton}
+                    >
+                      <Text style={styles.actionButtonText}>Rab</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   main_container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   image_container: {
-    backgroundColor: '#dadfe6',
+    backgroundColor: "#dadfe6",
     marginBottom: 10,
   },
   image_cover: {
@@ -415,19 +446,19 @@ const styles = StyleSheet.create({
   image: {
     width: WIDTH - 20,
     height: HEIGHT * 0.25,
-    resizeMode: 'stretch',
+    resizeMode: "stretch",
     borderRadius: 5,
     marginRight: 20,
   },
   description_card: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   btn_add_card: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: "center",
+    justifyContent: "flex-end",
     marginTop: 10,
   },
   add_icon: {
@@ -435,18 +466,18 @@ const styles = StyleSheet.create({
     color: APP_GREEN_COLOR,
   },
   button_section: {
-    width: '90%',
+    width: "90%",
     height: HEIGHT * 0.17,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: HEIGHT * 0.05,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -457,61 +488,69 @@ const styles = StyleSheet.create({
     marginTop: HEIGHT * 0.2,
   },
   modelRepportBtn: {
-    backgroundColor: 'pink',
+    backgroundColor: "pink",
     height: 50,
     marginVertical: 10,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   modelReportBtnText: {
     fontSize: 25,
-    fontWeight: 'bold',
-    textTransform: 'capitalize',
+    fontWeight: "bold",
+    textTransform: "capitalize",
   },
   button: {
     borderRadius: 10,
     paddingHorizontal: 20,
     height: 30,
     elevation: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonClose: {
     backgroundColor: APP_GREEN_COLOR,
     height: 40,
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
     fontSize: 20,
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   TextInputStyleClass: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 18,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     height: HEIGHT * 0.3,
-    width: '100%',
+    width: "100%",
     marginBottom: HEIGHT * 0.03,
   },
   actionButton: {
-    backgroundColor: 'red',
-    width: '40%',
+    backgroundColor: "red",
+    width: "40%",
     height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
   },
-  actionButtonText:{
-    fontSize: 18, 
-    fontWeight: 'bold'
-  }
-})
+  actionButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  createBtn: {
+    paddingLeft: 10,
+    borderRadius: 8,
+    height: 20,
+    alignItems: "flex-end",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+});
 
-export default RabHome
+export default RabHome;
