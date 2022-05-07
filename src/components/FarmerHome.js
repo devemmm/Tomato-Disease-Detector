@@ -101,7 +101,7 @@ const FarmerHome = ({ navigation }) => {
     if (!image) {
       Alert.alert(
         'error',
-        'before scanning the tomato crops you must be having an image picture in you phone. if you have it please choose image picture to upload it'
+        'before scanning the tomato crops you must be having tomato leaf image picture in you phone. if you have it please choose image picture to upload it'
       )
     } else {
       setUploadModel(false)
