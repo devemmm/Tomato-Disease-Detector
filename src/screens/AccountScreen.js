@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -10,149 +10,148 @@ import {
   StyleSheet,
   Alert,
   Image,
-} from 'react-native'
+} from "react-native";
 import {
   APP_GREEN_COLOR,
   HEIGHT,
   WIDTH,
   about_us,
   profile_image,
-} from '../contansts/constants'
-import { BottomSheet } from 'react-native-btr'
+} from "../contansts/constants";
+import { BottomSheet } from "react-native-btr";
 import {
   AntDesign,
   Entypo,
   MaterialIcons,
   FontAwesome,
   MaterialCommunityIcons,
-} from '@expo/vector-icons'
-import { Context as DataContext } from '../context/AppContext'
-import AppActivityIndictor from '../components/AppActivityIndicator'
-import appApi from "../api/apApi"
+} from "@expo/vector-icons";
+import { Context as DataContext } from "../context/AppContext";
+import AppActivityIndictor from "../components/AppActivityIndicator";
+import appApi from "../api/apApi";
 
 const AccountScreen = ({ navigation }) => {
-  const [showActivityIndicator, setshowActivityIndicator] = useState(false)
-  const [profile, setProfile] = useState(false)
-  const [about, setAbout] = useState(false)
-  const [TermPrivacy, setTermPrivacy] = useState(false)
-  const [help, setHelp] = useState(false)
-  const { state, signout } = useContext(DataContext)
-  const { user } = state
+  const [showActivityIndicator, setshowActivityIndicator] = useState(false);
+  const [profile, setProfile] = useState(false);
+  const [about, setAbout] = useState(false);
+  const [TermPrivacy, setTermPrivacy] = useState(false);
+  const [help, setHelp] = useState(false);
+  const { state, signout } = useContext(DataContext);
+  const { user } = state;
 
   const [newUserData, setNewUserData] = useState({
     fname: user.fname,
     lname: user.lname,
-  })
+  });
   const [newUserLocation, setNewUserLocation] = useState({
     country: user.location.country,
     province: user.location.province,
     district: user.location.district,
     sector: user.location.sector,
-    cell: user.location.cell
-  })
-
-
+    cell: user.location.cell,
+  });
 
   const [credentials, setCredentials] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  })
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
-
-  const handleUpdateUserInfo = ()=>{
-
+  const handleUpdateUserInfo = () => {
     // console.log({
     //   fname: newUserData.fname,
     //       lname: newUserData.lname,
     //       location: newUserLocation
     // })
     try {
-      setshowActivityIndicator(true)
+      setshowActivityIndicator(true);
       fetch(`${appApi}/users/profile`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           fname: newUserData.fname,
           lname: newUserData.lname,
-          location: newUserLocation
-        })
+          location: newUserLocation,
+        }),
       })
-        .then((response)=> response.json())
-        .then((res)=>{
-          setshowActivityIndicator(false)
-          if(res.error){
-            return Alert.alert('error', res.error.message)
+        .then((response) => response.json())
+        .then((res) => {
+          setshowActivityIndicator(false);
+          if (res.error) {
+            return Alert.alert("error", res.error.message);
           }
-          
-          setProfile(false)
-          signout({ token: 'usgk', navigation, setshowActivityIndicator })
-          Alert.alert('successfull', res.message)
-        })    
-        .catch((error)=>{
-          setshowActivityIndicator(false)
-          Alert.alert('error', 'check your network connection')
-        })  
-      
+
+          setProfile(false);
+          signout({ token: "usgk", navigation, setshowActivityIndicator });
+          Alert.alert("successfull", res.message);
+        })
+        .catch((error) => {
+          setshowActivityIndicator(false);
+          Alert.alert("error", "check your network connection");
+        });
     } catch (error) {
-      setshowActivityIndicator(false)
-      alert(error.message)
+      setshowActivityIndicator(false);
+      alert(error.message);
     }
-  }
+  };
 
-
-
-  const handleChangePassword = ()=>{
+  const handleChangePassword = () => {
     try {
-
-      if(credentials.newPassword !== credentials.confirmPassword){
-        throw new Error('both new Password and confirm password should be matching please try again')
+      if (credentials.newPassword !== credentials.confirmPassword) {
+        throw new Error(
+          "both new Password and confirm password should be matching please try again"
+        );
       }
 
-      if(credentials.newPassword.length < 6 || credentials.currentPassword.length < 6){
-        throw new Error('please both current password, new password and confirm password should not be under 6 in length. try again')
+      if (
+        credentials.newPassword.length < 6 ||
+        credentials.currentPassword.length < 6
+      ) {
+        throw new Error(
+          "please both current password, new password and confirm password should not be under 6 in length. try again"
+        );
       }
 
-      setshowActivityIndicator(true)
+      setshowActivityIndicator(true);
       fetch(`${appApi}/users/profile?type=password`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
-          ...credentials
-        })
+          ...credentials,
+        }),
       })
-        .then((response)=> response.json())
-        .then((res)=>{
-          setshowActivityIndicator(false)
-          if(res.error){
-            return Alert.alert('error',`${res.error.message}`)
+        .then((response) => response.json())
+        .then((res) => {
+          setshowActivityIndicator(false);
+          if (res.error) {
+            return Alert.alert("error", `${res.error.message}`);
           }
 
           setCredentials({
             ...credentials,
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-          })
-          Alert.alert('successfull','password changed successfull')
-        })    
-        .catch((error)=>{
-          setshowActivityIndicator(false)
-          Alert.alert('error', 'check your network connection')
-        })  
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+          });
+          Alert.alert("successfull", "password changed successfull");
+        })
+        .catch((error) => {
+          setshowActivityIndicator(false);
+          Alert.alert("error", "check your network connection");
+        });
     } catch (error) {
-      setshowActivityIndicator(false)
-      Alert.alert('error', error.message)
+      setshowActivityIndicator(false);
+      Alert.alert("error", error.message);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -160,13 +159,13 @@ const AccountScreen = ({ navigation }) => {
       <View style={styles.header}>
         <Image source={{ uri: profile_image }} style={styles.profile_picture} />
         <View>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
             {user.lname} {user.fname}
           </Text>
           <View
-            style={{ backgroundColor: 'grey', width: 60, alignItems: 'center' }}
+            style={{ backgroundColor: "grey", width: 60, alignItems: "center" }}
           >
-            <Text style={{ fontSize: 16, textTransform: 'capitalize' }}>
+            <Text style={{ fontSize: 16, textTransform: "capitalize" }}>
               {user.userType}
             </Text>
           </View>
@@ -178,12 +177,12 @@ const AccountScreen = ({ navigation }) => {
           onPress={() => setProfile(true)}
         >
           <MaterialCommunityIcons
-            name='account-details'
+            name="account-details"
             style={styles.menu_icon}
           />
           <View>
             <Text style={{ fontSize: 16 }}>Profile</Text>
-            <Text style={{ color: 'grey' }}>Complete Profile here</Text>
+            <Text style={{ color: "grey" }}>Complete Profile here</Text>
           </View>
         </TouchableOpacity>
 
@@ -191,42 +190,44 @@ const AccountScreen = ({ navigation }) => {
           style={styles.menu_op}
           onPress={() => setTermPrivacy(true)}
         >
-          <MaterialIcons name='privacy-tip' style={styles.menu_icon} />
+          <MaterialIcons name="privacy-tip" style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>Term & Privacy</Text>
-            <Text style={{ color: 'grey' }}>read the term and condition here</Text>
+            <Text style={{ color: "grey" }}>
+              read the term and condition here
+            </Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menu_op} onPress={() => setHelp(true)}>
-          <Entypo name='help' style={styles.menu_icon} />
+          <Entypo name="help" style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>Help</Text>
-            <Text style={{ color: 'grey' }}>get support here</Text>
+            <Text style={{ color: "grey" }}>get support here</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menu_op} onPress={() => setAbout(true)}>
-          <AntDesign name='infocirlce' style={styles.menu_icon} />
+          <AntDesign name="infocirlce" style={styles.menu_icon} />
           <View>
             <Text style={{ fontSize: 16 }}>About Us</Text>
-            <Text style={{ color: 'grey' }}>historical background</Text>
+            <Text style={{ color: "grey" }}>historical background</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.logout_card}
           onPress={() =>
-            signout({ token: 'usgk', navigation, setshowActivityIndicator })
+            signout({ token: "usgk", navigation, setshowActivityIndicator })
           }
         >
           <View style={styles.logout_btn}>
-            <FontAwesome name='sign-out' style={styles.menu_icon} />
+            <FontAwesome name="sign-out" style={styles.menu_icon} />
             <View>
               <Text style={{ fontSize: 18, color: APP_GREEN_COLOR }}>
                 Logout
               </Text>
-              <Text style={{ color: 'grey' }}>sign out in application</Text>
+              <Text style={{ color: "grey" }}>sign out in application</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -237,17 +238,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'white',
-            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
+            backgroundColor: "white",
+            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
                 paddingHorizontal: 15,
               }}
             >
@@ -256,11 +257,11 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require('../../assets/arrow-left.png')}
+                  source={require("../../assets/arrow-left.png")}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Update Your Account
               </Text>
             </View>
@@ -269,7 +270,7 @@ const AccountScreen = ({ navigation }) => {
               <View style={{ marginTop: 20 }}>
                 <Text style={styles.label}>First Name</Text>
                 <TextInput
-                  autoCapitalize='none'
+                  autoCapitalize="none"
                   autoCorrect={false}
                   style={styles.input_field}
                   value={newUserData.fname}
@@ -281,7 +282,7 @@ const AccountScreen = ({ navigation }) => {
               <View>
                 <Text style={styles.label}>Last Name</Text>
                 <TextInput
-                  autoCapitalize='none'
+                  autoCapitalize="none"
                   autoCorrect={false}
                   style={styles.input_field}
                   value={newUserData.lname}
@@ -293,7 +294,7 @@ const AccountScreen = ({ navigation }) => {
               <View>
                 <Text style={styles.label}>Province</Text>
                 <TextInput
-                  autoCapitalize='none'
+                  autoCapitalize="none"
                   autoCorrect={false}
                   style={styles.input_field}
                   value={newUserLocation.province}
@@ -305,7 +306,7 @@ const AccountScreen = ({ navigation }) => {
               <View>
                 <Text style={styles.label}>District</Text>
                 <TextInput
-                  autoCapitalize='none'
+                  autoCapitalize="none"
                   autoCorrect={false}
                   style={styles.input_field}
                   value={newUserLocation.district}
@@ -317,7 +318,7 @@ const AccountScreen = ({ navigation }) => {
               <View>
                 <Text style={styles.label}>Sector</Text>
                 <TextInput
-                  autoCapitalize='none'
+                  autoCapitalize="none"
                   autoCorrect={false}
                   style={styles.input_field}
                   value={newUserLocation.sector}
@@ -330,7 +331,7 @@ const AccountScreen = ({ navigation }) => {
               <View>
                 <Text style={styles.label}>Cell</Text>
                 <TextInput
-                  autoCapitalize='none'
+                  autoCapitalize="none"
                   autoCorrect={false}
                   style={styles.input_field}
                   value={newUserLocation.cell}
@@ -339,69 +340,108 @@ const AccountScreen = ({ navigation }) => {
                   }
                 />
               </View>
-              <View style={{ alignItems: 'center', marginTop: HEIGHT * 0.05 }}>
+              <View style={{ alignItems: "center", marginTop: HEIGHT * 0.05 }}>
                 <TouchableOpacity
                   style={{
                     backgroundColor: APP_GREEN_COLOR,
                     width: 80,
                     height: 40,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    justifyContent: "center",
+                    alignItems: "center",
                     borderRadius: 10,
                   }}
                   onPress={handleUpdateUserInfo}
                 >
                   <Text
-                    style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }}
+                    style={{ fontSize: 20, fontWeight: "bold", color: "#fff" }}
                   >
                     Save
                   </Text>
                 </TouchableOpacity>
               </View>
 
-            
-              {
-                showActivityIndicator ? <ActivityIndicator size='large' color='red' /> : null
-              }
+              {showActivityIndicator ? (
+                <ActivityIndicator size="large" color="red" />
+              ) : null}
 
-              <View style ={{width: '100%', backgroundColor: '#f5f3f0', borderRadius: 10, marginTop: 30}}>
-                <Text style = {{textAlign: 'center', fontWeight: 'bold', fontSize: 20, marginTop: 20, borderBottomColor: 'grey', borderBottomWidth: 0.5, paddingBottom: 10}}>Security</Text>
+              <View
+                style={{
+                  width: "100%",
+                  backgroundColor: "#f5f3f0",
+                  borderRadius: 10,
+                  marginTop: 30,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    marginTop: 20,
+                    borderBottomColor: "grey",
+                    borderBottomWidth: 0.5,
+                    paddingBottom: 10,
+                  }}
+                >
+                  Security
+                </Text>
                 <TextInput
-                  placeholder='Current password'
+                  placeholder="Current password"
                   style={styles.security_input}
-                  autoCapitalize= "none"
-                  autoComplete={false}
+                  autoCapitalize="none"
+                  // autoComplete={false}
                   autoCorrect={false}
                   secureTextEntry
-                  value = {credentials.currentPassword}
-                  onChangeText = {(value)=> setCredentials({ ...credentials, currentPassword: value})}
+                  value={credentials.currentPassword}
+                  onChangeText={(value) =>
+                    setCredentials({ ...credentials, currentPassword: value })
+                  }
                 />
                 <TextInput
-                  placeholder='New password'
+                  placeholder="New password"
                   style={styles.security_input}
-                  autoCapitalize= "none"
-                  autoComplete={false}
+                  autoCapitalize="none"
+                  // autoComplete={false}
                   autoCorrect={false}
-                  value = {credentials.newPassword}
+                  value={credentials.newPassword}
                   secureTextEntry
-                  onChangeText = {(value)=> setCredentials({ ...credentials, newPassword: value})}
+                  onChangeText={(value) =>
+                    setCredentials({ ...credentials, newPassword: value })
+                  }
                 />
                 <TextInput
-                  placeholder='Confirm password'
+                  placeholder="Confirm password"
                   style={styles.security_input}
-                  autoCapitalize= "none"
-                  autoComplete={false}
+                  autoCapitalize="none"
+                  // autoComplete={false}
                   autoCorrect={false}
                   secureTextEntry
-                  value = {credentials.confirmPassword}
-                  onChangeText = {(value)=> setCredentials({ ...credentials, confirmPassword: value})}
+                  value={credentials.confirmPassword}
+                  onChangeText={(value) =>
+                    setCredentials({ ...credentials, confirmPassword: value })
+                  }
                 />
 
                 <TouchableOpacity
-                  style={{backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', marginTop: 20, borderRadius: 15}}
-                    onPress = {handleChangePassword}
+                  style={{
+                    backgroundColor: "red",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 20,
+                    borderRadius: 15,
+                  }}
+                  onPress={handleChangePassword}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      paddingVertical: 10,
+                    }}
                   >
-                  <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold', paddingVertical: 10}}>Update Password</Text>
+                    Update Password
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -417,17 +457,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'white',
-            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
+            backgroundColor: "white",
+            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
                 paddingHorizontal: 15,
               }}
             >
@@ -436,7 +476,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require('../../assets/arrow-left.png')}
+                  source={require("../../assets/arrow-left.png")}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
@@ -447,10 +487,10 @@ const AccountScreen = ({ navigation }) => {
                 paddingHorizontal: 15,
                 paddingTop: HEIGHT * 0.03,
                 paddingBottom: 20,
-                width: '80%',
+                width: "80%",
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Tomato Disease Detector
               </Text>
             </View>
@@ -470,17 +510,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'white',
-            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
+            backgroundColor: "white",
+            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
                 paddingHorizontal: 15,
               }}
             >
@@ -489,7 +529,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require('../../assets/arrow-left.png')}
+                  source={require("../../assets/arrow-left.png")}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
@@ -500,10 +540,10 @@ const AccountScreen = ({ navigation }) => {
                 paddingHorizontal: 15,
                 paddingTop: HEIGHT * 0.03,
                 paddingBottom: 20,
-                width: '80%',
+                width: "80%",
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Tomato Disease Detector
               </Text>
             </View>
@@ -523,17 +563,17 @@ const AccountScreen = ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'white',
-            paddingTop: Platform.OS === 'ios' ? StatusBarHeight : null,
+            backgroundColor: "white",
+            paddingTop: Platform.OS === "ios" ? StatusBarHeight : null,
           }}
         >
           <ScrollView>
             <View
               style={{
                 height: 60,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
                 paddingHorizontal: 15,
               }}
             >
@@ -542,7 +582,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flex: 0.25, paddingVertical: 5, paddingRight: 10 }}
               >
                 <Image
-                  source={require('../../assets/arrow-left.png')}
+                  source={require("../../assets/arrow-left.png")}
                   style={{ height: 28, width: 28 }}
                 />
               </TouchableOpacity>
@@ -553,10 +593,10 @@ const AccountScreen = ({ navigation }) => {
                 paddingHorizontal: 15,
                 paddingTop: HEIGHT * 0.03,
                 paddingBottom: 20,
-                width: '80%',
+                width: "80%",
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Tomato Disease Detector
               </Text>
             </View>
@@ -573,17 +613,17 @@ const AccountScreen = ({ navigation }) => {
 
       <AppActivityIndictor showActivityIndicator={showActivityIndicator} />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     width: WIDTH - 40,
     marginTop: HEIGHT * 0.04,
   },
@@ -592,20 +632,20 @@ const styles = StyleSheet.create({
     width: 80,
     borderRadius: 200,
     marginRight: 15,
-    resizeMode: 'stretch',
+    resizeMode: "stretch",
   },
   menu: {
     width: WIDTH - 40,
     marginTop: HEIGHT * 0.03,
-    borderTopColor: 'grey',
+    borderTopColor: "grey",
     borderTopWidth: 0.5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   menu_op: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     height: 50,
     width: WIDTH - 20,
@@ -616,36 +656,36 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   logout_card: {
-    borderTopColor: 'grey',
+    borderTopColor: "grey",
     borderTopWidth: 0.5,
     marginTop: HEIGHT * 0.05,
   },
   logout_btn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: HEIGHT * 0.03,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: WIDTH - 100,
     height: 60,
   },
   label: {
     fontSize: 18,
-    color: 'grey',
+    color: "grey",
   },
   input_field: {
-    borderBottomColor: 'grey',
+    borderBottomColor: "grey",
     borderBottomWidth: 0.5,
     fontSize: 16,
     marginBottom: 20,
   },
   security_input: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingVertical: 10,
     marginTop: 10,
     borderRadius: 10,
     paddingLeft: 20,
-    fontSize: 18
-  }
-})
+    fontSize: 18,
+  },
+});
 
-export default AccountScreen
+export default AccountScreen;
