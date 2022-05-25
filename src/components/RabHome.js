@@ -281,7 +281,8 @@ const RabHome = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setModalUserVisible(true)}
+            // onPress={() => setModalUserVisible(true)}
+            onPress={() => navigation.navigate("UserList")}
             style={{
               flexDirection: "row",
               justifyContent: "center",

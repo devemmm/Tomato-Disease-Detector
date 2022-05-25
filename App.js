@@ -14,6 +14,7 @@ import ResultScreen from "./src/screens/ResultScreen";
 import ReportScreen from "./src/screens/ReportScreen";
 import ImageScreen from "./src/components/ImageScreen";
 import UserScreen from "./src/screens/UserScreen";
+import UserListScreen from "./src/screens/UserListScreen";
 import { APP_GREEN_COLOR } from "./src/contansts/constants";
 import { Provider as AuthProvider } from "./src/context/AppContext";
 
@@ -132,6 +133,15 @@ const App = () => {
             headerShown: false,
           }}
         />
+
+        <stack.Screen
+          name="UserList"
+          component={UserListScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+
         <stack.Screen
           name="Report"
           component={ReportScreen}
