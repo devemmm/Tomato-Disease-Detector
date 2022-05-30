@@ -16,6 +16,9 @@ import { AntDesign, MaterialIcons, Ionicons, Entypo } from "@expo/vector-icons";
 import apApi from "../api/apApi";
 import { Context as AuthContext } from "../context/AppContext";
 import { getSingleGif } from "../helpers/download";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import * as Permissions from "expo-permissions";
 
 const UserListScreen = ({ navigation }) => {
   const { state, setSelectedUser } = useContext(AuthContext);
@@ -57,11 +60,37 @@ const UserListScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
+  // const downloadFile = () => {
+  //   const uri = "http://techslides.com/demos/sample-videos/small.mp4";
+  //   let fileUri = FileSystem.documentDirectory + "small.mp4";
+  //   FileSystem.downloadAsync(uri, fileUri)
+  //     .then(({ uri }) => {
+  //       console.log("file downloaded");
+  //       // this.saveFile(uri);
+  //     })
+  //     .catch((error) => {
+  //       console.log("something went wrong");
+  //       console.error(error);
+  //     });
+  // };
+
   const handleDownload = () => {
-    getSingleGif("YsTs5ltWtEhnq")
-      .then((res) => console.log("downloaded"))
-      .catch((erro) => console.log("something went wrong"));
-    alert("under development");
+    // getSingleGif("YsTs5ltWtEhnq")
+    //   .then((res) => console.log("downloaded"))
+    //   .catch((erro) => console.log("something went wrong"));
+    // alert("under development");
+
+    FileSystem.downloadAsync(
+      "http://techslides.com/demos/sample-videos/small.mp4",
+      FileSystem.documentDirectory + "small.mp4"
+    )
+      .then(({ uri }) => {
+        console.log("Finished downloading to ", uri);
+      })
+      .catch((error) => {
+        console.error(error);
+      }),
+      console.log("development");
   };
 
   const handleOnClickUser = ({ item }) => {

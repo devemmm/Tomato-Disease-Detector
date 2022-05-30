@@ -12,8 +12,10 @@ import {
 import { HEIGHT, WIDTH, APP_GREEN_COLOR } from "../contansts/constants";
 import { Context as AuthContext } from "../context/AppContext";
 import apApi from "../api/apApi";
+import { Picker } from "@react-native-picker/picker";
 
 const UserScreen = ({ navigation }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState();
   const [person, setPerson] = useState({
     gender: "male",
     fname: "",
@@ -75,6 +77,9 @@ const UserScreen = ({ navigation }) => {
       return "stop";
     } else if (password.length < 6) {
       Alert.alert("error", "password length should be less than 6");
+      return "stop";
+    } else if (phone.length !== 10) {
+      Alert.alert("error", "phone number should be 10 in length");
       return "stop";
     } else {
       setActivityIndictor(true);
@@ -238,7 +243,20 @@ const UserScreen = ({ navigation }) => {
               }}
             />
           </View>
-          <View
+
+          <Picker
+            selectedValue={person.userType}
+            onValueChange={(itemValue, itemIndex) =>
+              setPerson({ ...person, userType: itemValue })
+            }
+            style={{ backgroundColor: "#bd8877", borderRadius: 10 }}
+          >
+            <Picker.Item label="Sector Agronomist" value="sector" />
+            <Picker.Item label="Distrct Agronomist" value="district" />
+            <Picker.Item label="Famer" value="famer" />
+            <Picker.Item label="RAB" value="rab" />
+          </Picker>
+          {/* <View
             style={{
               borderColor: "grey",
               borderWidth: 2,
@@ -258,7 +276,7 @@ const UserScreen = ({ navigation }) => {
                 setPerson({ ...person, userType: value })
               }
             />
-          </View>
+          </View> */}
         </ScrollView>
 
         <TouchableOpacity
