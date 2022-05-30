@@ -24,6 +24,11 @@ const AuthReducer = (state, action) => {
       );
       return { ...state, disease: remainsDisease };
 
+    case "add_selected_user":
+      return { ...state, selectedUser: action.payload };
+
+    case "reset_selected_user":
+      return { ...state, selectedUser: {} };
     default:
       return state;
   }
@@ -214,6 +219,12 @@ const aproveReport =
     }
   };
 
+const setSelectedUser = (dispatch) => async (user) =>
+  dispatch({ type: "add_selected_user", payload: user });
+
+const resetSelectedUser = (dispatch) => async (user) =>
+  dispatch({ type: "reset_selected_user" });
+
 export const { Context, Provider } = createDataContext(
   AuthReducer,
   {
@@ -223,6 +234,8 @@ export const { Context, Provider } = createDataContext(
     signout,
     viewReportedDisease,
     aproveReport,
+    setSelectedUser,
+    resetSelectedUser,
   },
-  { user: {}, disease: [] }
+  { user: {}, disease: [], selectedUser: {} }
 );

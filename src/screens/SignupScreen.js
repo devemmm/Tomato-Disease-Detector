@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -8,34 +8,34 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-} from 'react-native'
-import { HEIGHT, WIDTH, APP_GREEN_COLOR } from '../contansts/constants'
-import { Context as AuthContext } from '../context/AppContext'
+} from "react-native";
+import { HEIGHT, WIDTH, APP_GREEN_COLOR } from "../contansts/constants";
+import { Context as AuthContext } from "../context/AppContext";
 
 const SignupScreen = ({ navigation }) => {
   const [person, setPerson] = useState({
-    gender: 'male',
-    fname: '',
-    lname: '',
-    email: '',
-    phone: '',
-    password: '',
-    password2: '',
-  })
+    gender: "male",
+    fname: "",
+    lname: "",
+    email: "",
+    phone: "",
+    password: "",
+    password2: "",
+  });
   const [location, setLocation] = useState({
-    country: 'Rwanda',
-    province: '',
-    district: '',
-    sector: '',
-    cell: '',
-  })
+    country: "Rwanda",
+    province: "",
+    district: "",
+    sector: "",
+    cell: "",
+  });
 
-  const [showActivityIndicator, setActivityIndictor] = useState(false)
-  const { state, signup } = useContext(AuthContext)
+  const [showActivityIndicator, setActivityIndictor] = useState(false);
+  const { state, signup } = useContext(AuthContext);
 
   const handleSignup = () => {
-    const { fname, lname, email, phone, password, password2 } = person
-    const { country, province, district, sector, cell } = location
+    const { fname, lname, email, phone, password, password2 } = person;
+    const { country, province, district, sector, cell } = location;
     if (
       !fname ||
       !lname ||
@@ -50,20 +50,20 @@ const SignupScreen = ({ navigation }) => {
       !cell
     ) {
       Alert.alert(
-        'error',
-        'mising some required values please chech out your inputs'
-      )
-      return 'stop'
+        "error",
+        "mising some required values please chech out your inputs"
+      );
+      return "stop";
     } else if (password.length < 6) {
-      Alert.alert('error', 'password length should be greather than 6')
-      return 'stop'
+      Alert.alert("error", "password length should be greather than 6");
+      return "stop";
     } else if (person.password !== person.password2) {
-      Alert.alert('error', 'Password does not match')
-      return 'stop'
+      Alert.alert("error", "Password does not match");
+      return "stop";
     } else {
-      return 'continue'
+      return "continue";
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -78,10 +78,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={person.fname}
               onChangeText={(input) => {
-                setPerson({ ...person, fname: input })
+                setPerson({ ...person, fname: input });
               }}
             />
           </View>
@@ -90,10 +90,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={person.lname}
               onChangeText={(input) => {
-                setPerson({ ...person, lname: input })
+                setPerson({ ...person, lname: input });
               }}
             />
           </View>
@@ -102,12 +102,12 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
-              keyboardType='number-pad'
+              autoCapitalize="none"
+              keyboardType="number-pad"
               maxLength={10}
               value={person.phone}
               onChangeText={(input) => {
-                setPerson({ ...person, phone: input })
+                setPerson({ ...person, phone: input });
               }}
             />
           </View>
@@ -116,10 +116,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={person.email}
               onChangeText={(input) => {
-                setPerson({ ...person, email: input })
+                setPerson({ ...person, email: input });
               }}
             />
           </View>
@@ -129,10 +129,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={location.province}
               onChangeText={(input) => {
-                setLocation({ ...location, province: input })
+                setLocation({ ...location, province: input });
               }}
             />
           </View>
@@ -142,10 +142,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={location.district}
               onChangeText={(input) => {
-                setLocation({ ...location, district: input })
+                setLocation({ ...location, district: input });
               }}
             />
           </View>
@@ -155,10 +155,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={location.sector}
               onChangeText={(input) => {
-                setLocation({ ...location, sector: input })
+                setLocation({ ...location, sector: input });
               }}
             />
           </View>
@@ -168,10 +168,10 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               value={location.cell}
               onChangeText={(input) => {
-                setLocation({ ...location, cell: input })
+                setLocation({ ...location, cell: input });
               }}
             />
           </View>
@@ -181,11 +181,11 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               secureTextEntry
               value={person.password}
               onChangeText={(input) => {
-                setPerson({ ...person, password: input })
+                setPerson({ ...person, password: input });
               }}
             />
           </View>
@@ -194,11 +194,11 @@ const SignupScreen = ({ navigation }) => {
             <TextInput
               style={styles.input_field}
               autoCorrect={false}
-              autoCapitalize='none'
+              autoCapitalize="none"
               secureTextEntry
               value={person.password2}
               onChangeText={(input) => {
-                setPerson({ ...person, password2: input })
+                setPerson({ ...person, password2: input });
               }}
             />
           </View>
@@ -213,14 +213,17 @@ const SignupScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.btn_signin}
             onPress={() => {
-              if (handleSignup() === 'continue') {
+              if (person.phone.length !== 10) {
+                return alert("please, phone number should be 10 in length");
+              }
+              if (handleSignup() === "continue") {
                 signup({
                   person,
                   location,
                   Alert,
                   setActivityIndictor,
                   navigation,
-                })
+                });
               }
             }}
           >
@@ -232,41 +235,41 @@ const SignupScreen = ({ navigation }) => {
       {showActivityIndicator ? (
         <View
           style={{
-            position: 'absolute',
+            position: "absolute",
             bottom: 0,
             right: 0,
             left: 0,
             height: HEIGHT / 2,
           }}
         >
-          <ActivityIndicator size='large' color='red' />
+          <ActivityIndicator size="large" color="red" />
         </View>
       ) : null}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   header: {
     paddingTop: 20,
     width: WIDTH,
     height: HEIGHT * 0.25,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
+    alignItems: "center",
+    justifyContent: "space-evenly",
   },
   title: {
     fontSize: 35,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+    fontWeight: "bold",
+    textTransform: "uppercase",
     color: APP_GREEN_COLOR,
   },
   screen_title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   signup_form: {
     width: WIDTH - 30,
@@ -276,36 +279,36 @@ const styles = StyleSheet.create({
     marginBottom: HEIGHT * 0.05,
   },
   label: {
-    color: 'grey',
+    color: "grey",
     fontSize: 18,
   },
   input_field: {
     height: HEIGHT * 0.05,
-    borderBottomColor: 'grey',
+    borderBottomColor: "grey",
     borderBottomWidth: 0.5,
     fontSize: 20,
     marginBottom: 25,
   },
   xx: {
     marginTop: HEIGHT * 0.05,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   btn_signin: {
     backgroundColor: APP_GREEN_COLOR,
     height: 50,
     width: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
   },
   signup_text: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
+    textTransform: "uppercase",
+    fontWeight: "bold",
   },
-})
+});
 
-export default SignupScreen
+export default SignupScreen;
