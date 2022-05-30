@@ -20,6 +20,14 @@ import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as Permissions from "expo-permissions";
 
+const saveFile = async (fileUri) => {
+  const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  if (status === "granted") {
+    const asset = await MediaLibrary.createAssetAsync(fileUri);
+    await MediaLibrary.createAlbumAsync("Download", asset, false);
+  }
+};
+
 const UserListScreen = ({ navigation }) => {
   const { state, setSelectedUser } = useContext(AuthContext);
   const [users, setUser] = useState({
@@ -96,8 +104,11 @@ const UserListScreen = ({ navigation }) => {
       "http://techslides.com/demos/sample-videos/small.mp4",
       FileSystem.documentDirectory + "small.mp4"
     )
-      .then(({ uri }) => {
-        console.log("Finished downloading to ", uri);
+      .then((pro) => {
+        console.log("Finished downloading to ", pro.uri);
+        saveFile()
+          .then((respo) => console.log("save"))
+          .catch((errorr) => console.log("not saved"));
       })
       .catch((error) => {
         console.error(error);
@@ -215,7 +226,7 @@ const UserListScreen = ({ navigation }) => {
           <AntDesign name="clouddownload" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      <View style={{ width: "100%" }}>
+      <ScrollView style={{ width: "100%" }}>
         <View style={styles.th}>
           <Text>No</Text>
           <Text>Names</Text>
@@ -379,6 +390,7 @@ const UserListScreen = ({ navigation }) => {
             );
           }}
         ></FlatList>
+
         {showActivityIndicator ? (
           <View
             style={{
@@ -390,7 +402,7 @@ const UserListScreen = ({ navigation }) => {
             <ActivityIndicator size="large" color="green" />
           </View>
         ) : null}
-      </View>
+      </ScrollView>
 
       <Modal
         animationType="slide"
