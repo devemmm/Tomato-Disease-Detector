@@ -22,7 +22,12 @@ import * as Permissions from "expo-permissions";
 
 const UserListScreen = ({ navigation }) => {
   const { state, setSelectedUser } = useContext(AuthContext);
-  const [users, setUser] = useState([]);
+  const [users, setUser] = useState({
+    famer: [],
+    sector: [],
+    district: [],
+    rab: [],
+  });
   const [showActivityIndicator, setshowActivityIndicator] = useState(false);
   const [modalUserVisible, setModalUserVisible] = useState(false);
   const [phone, setPhone] = useState(
@@ -49,7 +54,14 @@ const UserListScreen = ({ navigation }) => {
             Alert.alert("error", res.error.message);
           } else {
             setshowActivityIndicator(false);
-            setUser(users);
+
+            setUser({
+              ...users,
+              famer: users.filter((user) => user.userType === "famer"),
+              sector: users.filter((user) => user.userType === "sector"),
+              district: users.filter((user) => user.userType === "district"),
+              rab: users.filter((user) => user.userType === "rab"),
+            });
           }
         })
         .catch((error) => {
@@ -211,8 +223,140 @@ const UserListScreen = ({ navigation }) => {
           <Text>Phone</Text>
           <Text>Role</Text>
         </View>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "bold",
+            borderBottomColor: "grey",
+            borderBottomWidth: 1,
+            color: APP_GREEN_COLOR,
+            paddingBottom: 10,
+          }}
+        >
+          Famer -- List
+        </Text>
         <FlatList
-          data={users}
+          style={{ marginTop: 15 }}
+          data={users.famer}
+          keyExtractor={(user) => user.phone}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.tr,
+                  {
+                    backgroundColor: (index + 1) % 2 === 0 ? "#e0d8d7" : null,
+                    marginBottom: 5,
+                  },
+                ]}
+                onPress={() => handleOnClickUser({ item })}
+              >
+                <Text>{index + 1}</Text>
+                <Text>{item.fname + " " + item.lname}</Text>
+                <Text>{item.gender}</Text>
+                <Text>{item.phone}</Text>
+                <Text>{item.userType}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        ></FlatList>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "bold",
+            borderBottomColor: "grey",
+            borderBottomWidth: 1,
+            marginTop: 10,
+            color: APP_GREEN_COLOR,
+            paddingBottom: 10,
+          }}
+        >
+          Sector Agronomist -- List
+        </Text>
+        <FlatList
+          style={{ marginTop: 15 }}
+          data={users.sector}
+          keyExtractor={(user) => user.phone}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.tr,
+                  {
+                    backgroundColor: (index + 1) % 2 === 0 ? "#e0d8d7" : null,
+                    marginBottom: 5,
+                  },
+                ]}
+                onPress={() => handleOnClickUser({ item })}
+              >
+                <Text>{index + 1}</Text>
+                <Text>{item.fname + " " + item.lname}</Text>
+                <Text>{item.gender}</Text>
+                <Text>{item.phone}</Text>
+                <Text>{item.userType}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        ></FlatList>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "bold",
+            borderBottomColor: "grey",
+            borderBottomWidth: 1,
+            marginTop: 10,
+            color: APP_GREEN_COLOR,
+            paddingBottom: 10,
+          }}
+        >
+          District Agronomist -- List
+        </Text>
+        <FlatList
+          style={{ marginTop: 15 }}
+          data={users.district}
+          keyExtractor={(user) => user.phone}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.tr,
+                  {
+                    backgroundColor: (index + 1) % 2 === 0 ? "#e0d8d7" : null,
+                    marginBottom: 5,
+                  },
+                ]}
+                onPress={() => handleOnClickUser({ item })}
+              >
+                <Text>{index + 1}</Text>
+                <Text>{item.fname + " " + item.lname}</Text>
+                <Text>{item.gender}</Text>
+                <Text>{item.phone}</Text>
+                <Text>{item.userType}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        ></FlatList>
+
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "bold",
+            borderBottomColor: "grey",
+            borderBottomWidth: 1,
+            marginTop: 10,
+            color: APP_GREEN_COLOR,
+            paddingBottom: 10,
+          }}
+        >
+          RAB List -- Admins
+        </Text>
+        <FlatList
+          style={{ marginTop: 15 }}
+          data={users.rab}
           keyExtractor={(user) => user.phone}
           renderItem={({ item, index }) => {
             return (
