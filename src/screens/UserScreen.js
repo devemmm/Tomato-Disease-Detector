@@ -105,7 +105,7 @@ const UserScreen = ({ navigation }) => {
           if (statusCode === 201) {
             cleanField();
             Alert.alert("success", res.message);
-            return navigation.navigate("mainFlow");
+            return navigation.navigate("MainFlow");
           }
         })
         .catch((error) => {

@@ -19,7 +19,7 @@ import { Provider as AuthProvider } from "./src/context/AppContext";
 const stack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
-const mainFlow = () => {
+const MainFlow = () => {
   return (
     <tab.Navigator
       initialRouteName="Home"
@@ -109,8 +109,8 @@ const App = () => {
           }}
         />
         <stack.Screen
-          name="mainFlow"
-          component={mainFlow}
+          name="MainFlow"
+          component={MainFlow}
           options={{
             headerShown: false,
           }}
