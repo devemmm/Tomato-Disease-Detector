@@ -19,6 +19,7 @@ import { getSingleGif } from "../helpers/download";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as Permissions from "expo-permissions";
+const filename = "Tomato-Disease-Detector-user-list.xlsx";
 
 const saveFile = async (fileUri) => {
   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -115,6 +116,31 @@ const UserListScreen = ({ navigation }) => {
       }),
       console.log("development");
   };
+
+
+
+  const generateReport = ({ type }) => {
+
+    setshowActivityIndicator(true);
+    fetch(`${apApi}/admin/pushreport?type=${type}`, {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.user.token}`,
+      }
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        setshowActivityIndicator(false);
+        Alert.alert("success", "User list sent please check your Email !!!");
+      })
+      .catch((error) => {
+        setshowActivityIndicator(false);
+        Alert.alert("error", "something went wrong");
+      });
+  }
+
 
   const handleOnClickUser = ({ item }) => {
     setPhone(item.phone);
@@ -222,7 +248,7 @@ const UserListScreen = ({ navigation }) => {
         >
           <Text style={styles.headerTxt}>TDD USERS</Text>
         </View>
-        <TouchableOpacity onPress={handleDownload}>
+        <TouchableOpacity onPress={() => generateReport({ type: 'user' })}>
           <AntDesign name="clouddownload" size={24} color="black" />
         </TouchableOpacity>
       </View>
