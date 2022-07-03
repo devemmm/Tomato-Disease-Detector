@@ -20,7 +20,8 @@ import {
   normalTomatoes,
   affectedTomatoes,
 } from "../contansts/constants";
-import { AntDesign, Ionicons, MaterialIcons, Entypo } from "@expo/vector-icons";
+
+import { AntDesign, Ionicons, MaterialCommunityIcons, MaterialIcons, Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Context as DataContext } from "../context/AppContext";
 import appApi from "../api/apApi";
@@ -204,6 +205,29 @@ const RabHome = ({ navigation }) => {
         });
     }
   };
+
+
+
+  const generateReport = ({ type }) => {
+    setshowActivityIndicator(true);
+    fetch(`${appApi}/admin/pushreport?type=${type}`, {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.user.token}`,
+      }
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        setModalVisible(!modalVisible);
+        Alert.alert("success", "User list sent please check your Email !!!");
+      })
+      .catch((error) => {
+        setModalVisible(!modalVisible);
+        Alert.alert("error", "something went wrong");
+      });
+  }
   return (
     <View>
       <View style={styles.main_container}>
@@ -219,7 +243,7 @@ const RabHome = ({ navigation }) => {
                   <Image style={styles.image} source={{ uri: item.url }} />
                   <View style={styles.description_card}>
                     <Text>{item.title}</Text>
-                    <Text>{item.description}</Text>
+                    {/* <Text>{item.description}</Text> */}
                   </View>
                 </View>
               );
@@ -240,7 +264,7 @@ const RabHome = ({ navigation }) => {
                   <Image style={styles.image} source={{ uri: item.url }} />
                   <View style={styles.description_card}>
                     <Text>{item.title}</Text>
-                    <Text>{item.description}</Text>
+                    {/* <Text>{item.description}</Text> */}
                   </View>
                 </View>
               );
@@ -320,6 +344,11 @@ const RabHome = ({ navigation }) => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={{ height: 200, width: "100%" }}>
+
+              <TouchableOpacity onPress={() => generateReport({ type: 'dis' })}>
+                <AntDesign name="clouddownload" style={{ alignSelf: 'flex-end', color: 'red', fontSize: 24 }} />
+              </TouchableOpacity>
+              {/* <MaterialCommunityIcons name="gmail" style={{ alignSelf: 'flex-end', color: 'black', fontSize: 24 }} onPress={() => console.log("clicked")} /> */}
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(!modalVisible);

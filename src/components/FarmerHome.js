@@ -46,7 +46,7 @@ const FarmerHome = ({ navigation }) => {
   const { user } = state
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (Platform.OS !== 'web') {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -58,9 +58,9 @@ const FarmerHome = ({ navigation }) => {
   }, [image])
 
 
-  useEffect(()=>{
-    const unsubscribe = navigation.addListener('focus', ()=>{
-      if(!image){
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (!image) {
         setTitle('no image was selected!')
       }
     })
@@ -109,9 +109,9 @@ const FarmerHome = ({ navigation }) => {
     }
   }
 
-  const findDisease = (dis)=>{
-    const disease =  diseaseContainer.find((item)=> item.name.toLowerCase() === dis.toLowerCase())
-    return disease ? disease : {name: 'not found', description: 'not found'}
+  const findDisease = (dis) => {
+    const disease = diseaseContainer.find((item) => item.name.toLowerCase() === dis.toLowerCase())
+    return disease ? disease : { name: 'not found', description: 'not found' }
   }
 
 
@@ -119,8 +119,8 @@ const FarmerHome = ({ navigation }) => {
     let data = new FormData();
     data.append('file', {
       uri: image,
-      name: `tomatoLeaf.${image.substring(image.length - 7).split('.') [1]}`,
-      type: `image/${image.substring(image.length - 7).split('.') [1]}`
+      name: `tomatoLeaf.${image.substring(image.length - 7).split('.')[1]}`,
+      type: `image/${image.substring(image.length - 7).split('.')[1]}`
     });
     const config = {
       method: "POST",
@@ -148,9 +148,9 @@ const FarmerHome = ({ navigation }) => {
               name: res,
               description: findDisease(res).description
             }
-        
+
             navigation.navigate('Result', {
-              report : {disease},
+              report: { disease },
             })
           }
         })
@@ -179,7 +179,7 @@ const FarmerHome = ({ navigation }) => {
                   <Image style={styles.image} source={{ uri: item.url }} />
                   <View style={styles.description_card}>
                     <Text>{item.title}</Text>
-                    <Text>{item.description}</Text>
+                    {/* <Text>{item.description}</Text> */}
                   </View>
                 </View>
               )
@@ -200,7 +200,7 @@ const FarmerHome = ({ navigation }) => {
                   <Image style={styles.image} source={{ uri: item.url }} />
                   <View style={styles.description_card}>
                     <Text>{item.title}</Text>
-                    <Text>{item.description}</Text>
+                    {/* <Text>{item.description}</Text> */}
                   </View>
                 </View>
               )

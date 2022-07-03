@@ -17,18 +17,18 @@ import { Feather } from '@expo/vector-icons'
 import { Context as DataContext } from '../context/AppContext'
 import appApi from "../api/apApi"
 
-const AdHome = ({navigation}) => {
+const AdHome = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [message, setMessage] = useState('')
   const [id, setId] = useState(null)
   const { state, aproveReport } = useContext(DataContext)
   const { user } = state
   const [showActivityIndicator, setshowActivityIndicator] = useState(false)
-  
+
   const [disease, setDisease] = useState([])
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', ()=>{
+    const unsubscribe = navigation.addListener('focus', () => {
       try {
         setDisease([])
         setshowActivityIndicator(true)
@@ -59,7 +59,7 @@ const AdHome = ({navigation}) => {
         console.log(error.message)
       }
     })
-  
+
     return unsubscribe;
   }, [navigation])
 
